@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cooluri>
+ 
+  <cache>
+    <usecache>1</usecache><!-- READONLY -->
+    <params2cool>
+      <!-- how often (in days) should be links updated (Typo3 cache needs to be cleared) -->
+      <checkforchangeevery>1</checkforchangeevery>
+    </params2cool>
+    <cool2params>
+      <!-- how many days should old links (those that are redirected to existing) should be kept active -->
+      <oldlinksvalidfor>365</oldlinksvalidfor>
+    </cool2params>
+    
+    <!-- pagenotfound>
+      <status>HTTP/1.0 404 Not Found</status>
+      <behavior type="message"><![CDATA[ <h1>Page not found!</h1> ]]></behavior>
+    </pagenotfound -->
+  </cache>
+
+  <pagepath>
+    <!-- first non-empty value will be used -->
+    <title>tx_realurl_pathsegment,alias,subtitle,title</title>
+    
+    <saveto>id</saveto><!-- READONLY -->
+    <default>0</default><!-- READONLY -->
+    
+    <userfunc>tx_cooluri->getPageTitle</userfunc>
+    <t3conv>1</t3conv>
+  </pagepath>
+ 
+  <uriparts>
+    <part>
+      <parameter>array[k1]</parameter>
+    </part>
+    <!-- you can move cHash to predefineparts to remove in from URL
+         but first read the manual -->
+    <part>
+      <parameter>cHash</parameter>
+    </part>
+    
+    <!-- common patterns -->
+    
+    <!-- this will just add this parameter value to URL -->
+    <part>
+      <parameter>paramA</parameter>
+    </part>
+    <!-- this will look up parameter value in the database table "sometable" and if found
+          the value will be transformed using Typo3 csconv into URL-like value. 
+        You can make all sorts of MySQL stuff here, such as add UID into the result:
+        SELECT CONCAT(title,'-',uid) FROM ...
+    -->
+    <part>
+      <parameter>paramB</parameter>
+      <lookindb>
+        <to>SELECT title FROM pages WHERE uid=$1</to>
+        <t3conv>1</t3conv>
+      </lookindb>
+    </part>
+
+    <part>
+        <parameter>atParam[@atValue]</parameter>
+    </part>
+  </uriparts>
+  
+  <predefinedparts>
+    <part>
+      <parameter>no_cache</parameter>
+    </part>
+    
+    <!-- common patterns -->
+    
+    <!-- parts defined this way will be removed from URL -->
+    <part>
+      <parameter>paramC</parameter>
+    </part>
+    <!-- this will prefix a value with "prefix-". Cannot be localized.
+    -->
+    <part key="prefix-(.*)" regexp="1">
+      <parameter>paramD</parameter>
+    </part>
+
+    <part key="page-(.*)" regexp="1">
+        <parameter>array[k5]</parameter>
+    </part>
+    <!-- if parameter matches value, key will be added to URL 
+         with mutliple values, use valuemaps
+    -->
+    <part key="thisWillAppearInUrl">
+      <parameter>paramE</parameter>
+      <value>ifParamEMatcesThisValue</value>
+    </part>
+  </predefinedparts>
+  
+  <valuemaps>
+    <valuemap>
+      <parameter>L</parameter>
+      <!-- L is empty of 0, result is empty -->
+      <value key="">0</value>
+      <!-- L is 1, result is "en" -->
+      <value key="en">1</value>
+    </valuemap>
+  </valuemaps>
+  
+  <!-- this will put L param to the first position
+      for more magic see manual -->
+  <paramorder>
+    <param>L</param>
+  </paramorder>
+  
+<!-- READONLY START -->
+<cooluris>1</cooluris>
+  
+</cooluri>

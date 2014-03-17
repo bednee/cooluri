@@ -1,0 +1,163 @@
+CoolUri 1.0.33:
+Link fix module
+Bug #40092: Link to the CoolUri manual on docs.google removed
+Bug #25947: Mountpoint page name fix
+Bug #9579: Mountpoint domain fix
+Bug #6080 fix - conversion of | added
+Bug #38316 fix - original params are now passed to user_func
+Bug #39090 fix - convert encoded [] when redirecting from old to new
+Bug #38054 fix - hook changed to prevent double content generation
+Bug #44729 fix - key length
+Bug #3360: New feature - defaults - default values for not set parameters...
+Bug #35799 fix - $_SERVER replaced by getIndpEnv
+Bug #35799 fix - $_SERVER replaced by getIndpEnv
+Bug #45916 fix - random shortcut now works correctly and ignores not in menu pages
+
+CoolUri 1.0.29:
+- Languages under different domains support
+
+CoolUri 1.0.28:
+- #31732: Added speaking URL to page language overlay, added validation
+- LL_db from PHP to XML - 4.6 compatibility fix
+- Zero value parameters translation fixed
+- #31706: Decode all special chars, not only []
+
+CoolUri 1.0.26:
+- Bug #28519: Encode and decode brackets because of 4.5.4
+- 301 redirect for redirectOldLinksToNew
+
+r48786 | bednee | 2011-06-16 22:36:33 CEST
+
+Bug #6425 fix (felogin does not work with saltedpasswords and rsaauth if cooluri is turned on)
+Bug #11080 fix (config.absRefPrefix is not taken into account)
+----------------------------------------------------------------------------
+r48098 | bednee | 2011-05-24 23:03:23 CEST
+
+Untranslated parameters are not stored in cache
+----------------------------------------------------------------------------
+r46292 | bednee | 2011-04-06 20:12:40 CEST
+
+Shortcut problem fix
+----------------------------------------------------------------------------
+r46212 | bednee | 2011-04-04 21:31:10 CEST
+
+Fixed multidomain bug + prep for lang_cooluri ext
+----------------------------------------------------------------------------
+r43728 | bednee | 2011-02-16 21:02:47 CET
+
+fix for #11347: Check for doktype when following shortcuts
+
+----------------------------------------------------------------------------
+r43726 | bednee | 2011-02-16 20:48:58 CET
+
+fixing Bug #13070: Missing domain when redirecting old links
+----------------------------------------------------------------------------
+r43718 | bednee | 2011-02-16 19:40:57 CET
+
+fixing Bug #13083: Update action in backend is broken
+----------------------------------------------------------------------------
+r43590 | bednee | 2011-02-14 23:49:19 CET
+
+1.0.21 release
+----------------------------------------------------------------------------
+r43588 | bednee | 2011-02-14 23:46:38 CET
+
+Bugfixes: Missing reference to params cause {L=0} parameter reference not to work. When uriparameter was used in paramorder, it was appended as normal parameter too.
+----------------------------------------------------------------------------
+r41659 | bednee | 2010-12-31 16:19:43 CET
+
+Multidomains issue fix, ,pre logging
+----------------------------------------------------------------------------
+r40463 | bednee | 2010-11-19 17:44:07 CET
+
+Conflicts to other extensions added
+----------------------------------------------------------------------------
+r36134 | bednee | 2010-07-28 18:14:42 CEST
+
+Major refactoring - methods splitted into smaller piecies for better readibility
+----------------------------------------------------------------------------
+r28316 | bednee | 2010-01-03 12:15:24 CET
+
+Removing / from allowed characters, as it didn't pass rawurlencode untouched
+----------------------------------------------------------------------------
+r28315 | bednee | 2010-01-03 12:04:56 CET
+
+Removing extra comma
+----------------------------------------------------------------------------
+r28314 | bednee | 2010-01-03 12:04:02 CET
+
+Commiting missing SQL file for the Exclude always feature
+----------------------------------------------------------------------------
+r28313 | bednee | 2010-01-03 12:02:00 CET
+
+Fixing regular expression
+----------------------------------------------------------------------------
+r28192 | bednee | 2009-12-29 21:45:49 CET
+
+Special tt_news query added to FAQ section
+----------------------------------------------------------------------------
+r28191 | bednee | 2009-12-29 21:45:20 CET
+
+Ereg_replace replaced by Preg_replace because of deprecation in PHP
+----------------------------------------------------------------------------
+r28190 | bednee | 2009-12-29 21:44:42 CET
+
+Exclude always option added
+----------------------------------------------------------------------------
+r28189 | bednee | 2009-12-29 20:46:11 CET
+
+Fixing doble slashes for GET vars
+----------------------------------------------------------------------------
+r25102 | bednee | 2009-10-05 21:19:48 CEST
+
+Added another log
+----------------------------------------------------------------------------
+r24758 | bednee | 2009-09-23 22:34:45 CEST
+
+Better logging
+----------------------------------------------------------------------------
+r24757 | bednee | 2009-09-23 22:26:01 CEST
+
+Added some debug
+
+----------------------------------------------------------------------------
+r19885 | bednee | 2009-05-04 22:28:28 CEST
+
+Fix when CoolUri is used in subdirectories
+----------------------------------------------------------------------------
+r19038 | bednee | 2009-04-15 20:11:51 CEST
+
+Fix for empty $params
+----------------------------------------------------------------------------
+r18870 | bednee | 2009-04-09 00:12:42 CEST
+
+"All" link now working
+----------------------------------------------------------------------------
+r18869 | bednee | 2009-04-09 00:12:19 CEST
+
+Domain can be set from outside
+----------------------------------------------------------------------------
+r18868 | bednee | 2009-04-09 00:11:39 CEST
+
+Version update
+----------------------------------------------------------------------------
+r18867 | bednee | 2009-04-09 00:11:22 CEST
+
+1.0.16 RELEASE - manual updates
+----------------------------------------------------------------------------
+r17799 | bednee | 2009-03-14 00:21:05 CET
+
+Include/Exclude for suffix/prefix/slash
+----------------------------------------------------------------------------
+r17216 | bednee | 2009-02-25 20:40:23 CET
+
+Ext tables for postrgre SQL, thanks to Christian Lerrahn
+----------------------------------------------------------------------------
+r17214 | bednee | 2009-02-25 20:37:29 CET
+
+Fixing multidimensional arrays parsing in URL
+----------------------------------------------------------------------------
+r17146 | bednee | 2009-02-23 22:30:19 CET
+
+Working way of comparison
+----------------------------------------------------------------------------
