@@ -383,7 +383,16 @@ class tx_cooluri
 
     public static function goForRedirect($params, $ref)
     {
-        if (empty($_GET['ADMCMD_prev']) && $GLOBALS['TSFE']->config['config']['tx_cooluri_enable'] == 1 && $GLOBALS['TSFE']->config['config']['redirectOldLinksToNew'] == 1 && t3lib_div::getIndpEnv('REQUEST_URI') && (substr(t3lib_div::getIndpEnv('REQUEST_URI'), 1, 9) == 'index.php' || substr(t3lib_div::getIndpEnv('REQUEST_URI'), 1, 1) == '?')) {
+        if (
+                empty($_GET['ADMCMD_prev']) &&
+                $GLOBALS['TSFE']->config['config']['tx_cooluri_enable'] == 1 &&
+                $GLOBALS['TSFE']->config['config']['redirectOldLinksToNew'] == 1 &&
+                t3lib_div::getIndpEnv('REQUEST_URI') &&
+                (
+                        substr(t3lib_div::getIndpEnv('REQUEST_URI'), 1, 9) == 'index.php' || substr(t3lib_div::getIndpEnv('REQUEST_URI'), 1, 1) == '?'
+                ) &&
+                !stripos(t3lib_div::getIndpEnv('REQUEST_URI'),'eID=')
+        ) {
             $ourl = t3lib_div::getIndpEnv('REQUEST_URI');
             $ss = explode('?', $ourl);
             if ($ss[1]) {
