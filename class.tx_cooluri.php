@@ -452,7 +452,7 @@ class tx_cooluri
             $langVar = 'L';
         }
 
-        $langId = empty($value[$langVar]) ? ($GLOBALS['TSFE']->config['config']['sys_language_uid'] ? $GLOBALS['TSFE']->config['config']['sys_language_uid'] : false) : $value[$langVar];
+        $langId = isset($value[$langVar]) ? $value[$langVar] : $GLOBALS['TSFE']->config['config']['sys_language_uid'];
         $langId = (int)$langId;
 
         $pagepath = Array();
