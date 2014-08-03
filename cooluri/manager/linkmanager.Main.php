@@ -247,15 +247,12 @@ class LinkManger_Main {
   }
 
   public function old() {
-    if (empty($_REQUEST['l']))
-      $let = '%';
-    else
-      $let = $_REQUEST['l'];
+    $let = $_REQUEST['l'];
 
     $c = '<h1>Old links</h1>';
 
     $c .= '<p class="center">';
-    $c .= '<b><a href="'.$this->file.'mod=old">all</a></b>
+    $c .= '<b><a href="'.$this->file.'mod=old&amp;l=%">all</a></b>
     ';
     for ($i=ord('A');$i<=ord('Z');$i++) {
       $c .= '<b><a href="'.$this->file.'mod=old&amp;l='.strtoupper(chr($i)).'">'.strtoupper(chr($i)).'</a></b>
@@ -270,26 +267,30 @@ class LinkManger_Main {
     </p>
     </form>';
 
-    $q = $this->db->query('SELECT o.id, o.url AS ourl, l.url AS lurl, o.tstamp FROM '.$this->table.'oldlinks AS o LEFT JOIN '.$this->table.'cache AS l
-                            ON l.id=o.link_id WHERE LOWER(o.url) LIKE '.$this->db->escape(strtolower($let).'%').' ORDER BY o.url');
+    if (!empty($let)) {
+        $q = $this->db->query('SELECT o.id, o.url AS ourl, l.url AS lurl, o.tstamp FROM '.$this->table.'oldlinks AS o LEFT JOIN '.$this->table.'cache AS l
+                                ON l.id=o.link_id WHERE LOWER(o.url) LIKE '.$this->db->escape(strtolower($let).'%').' ORDER BY o.url');
 
-    $num = $this->db->num_rows($q);
-    if ($num>0) {
-      $c .= '<p class="center">Records found: '.$num.'</p>';
-      $c .= '<form method="post" action="'.$this->file.'mod=cache">';
-      $c .= '<table id="list"><tr><th class="left">Old URI</th><th class="left">Cached URI</th><th>Moved to olds</th><th>Action</th>';
-      while ($row = $this->db->fetch($q)) {
-        $c .= '<tr>
-          <td class="left">'.$row['ourl'].'</td>
-          <td class="left">'.$row['lurl'].'</td>
-          <td>'.$row['tstamp'].'</td>
-          <td class="nowrap"><a href="'.$this->file.'mod=delete&amp;old&amp;lid='.$row['id'].'&amp;from=old:'.$let.'"><img src="'.$this->resPath.'img/button_garbage.gif" alt="Delete" title="Delete" onclick="return confirm(\'Are you sure?\');" /></a>
-          </td>
-        </tr>';
-      }
-      $c .= '</table></form>';
+        $num = $this->db->num_rows($q);
+        if ($num>0) {
+          $c .= '<p class="center">Records found: '.$num.'</p>';
+          $c .= '<form method="post" action="'.$this->file.'mod=cache">';
+          $c .= '<table id="list"><tr><th class="left">Old URI</th><th class="left">Cached URI</th><th>Moved to olds</th><th>Action</th>';
+          while ($row = $this->db->fetch($q)) {
+            $c .= '<tr>
+              <td class="left">'.$row['ourl'].'</td>
+              <td class="left">'.$row['lurl'].'</td>
+              <td>'.$row['tstamp'].'</td>
+              <td class="nowrap"><a href="'.$this->file.'mod=delete&amp;old&amp;lid='.$row['id'].'&amp;from=old:'.$let.'"><img src="'.$this->resPath.'img/button_garbage.gif" alt="Delete" title="Delete" onclick="return confirm(\'Are you sure?\');" /></a>
+              </td>
+            </tr>';
+          }
+          $c .= '</table></form>';
+        } else {
+          $c .= '<p>No old links found.</p>';
+        }
     } else {
-      $c .= '<p>No old links found.</p>';
+        $c .= '<p>Input any filter. Use "%" to get all links.</p>';
     }
     return $c;
   }
