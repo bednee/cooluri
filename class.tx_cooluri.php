@@ -392,7 +392,11 @@ class tx_cooluri
             }
 
             $pageid = $pars['id'];
-            if (!ctype_digit($pageid)) {
+
+            if (is_null($pageid)) {
+                  // No page id given, so no need to redirect
+                return;
+            } else if (!ctype_digit($pageid)) {
                 $pageid = $GLOBALS['TYPO3_DB']->fullQuoteStr($pageid, 'pages');
                 $q = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'pages', 'alias=' . $pageid);
                 $page = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($q);
