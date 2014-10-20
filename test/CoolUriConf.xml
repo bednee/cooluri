@@ -90,6 +90,11 @@
       <parameter>paramE</parameter>
       <value>ifParamEMatcesThisValue</value>
     </part>
+
+      <!--tx_news pagination test-->
+      <part key="page-(.*)" regexp="1">
+          <parameter>tx_news_pi1[@widget_0][currentPage]</parameter>
+      </part>
   </predefinedparts>
   
   <valuemaps>

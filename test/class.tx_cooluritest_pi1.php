@@ -22,7 +22,9 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(PATH_tslib . 'class.tslib_pibase.php');
+if (!class_exists('tslib_pibase')) {
+    require_once(PATH_tslib . 'class.tslib_pibase.php');
+}
 
 class tx_cooluritest_pi1 extends tslib_pibase {
 
@@ -38,7 +40,8 @@ class tx_cooluritest_pi1 extends tslib_pibase {
         Array(25,'&atParam[@atValue]=ATVAL',Array('atParam' => array('@atValue' => 'ATVAL'))),
         Array(22,'&paramA=0&paramD=0',Array('paramA'=>'0','paramD'=>'0')),
         Array(25,'&paramX=view-list|page_id-142',Array('paramX'=>'view-list|page_id-142')),
-        Array(25,'&paramA=FOO&paramB=6666')
+        Array(25,'&paramA=FOO&paramB=6666'),
+        Array(22,'&tx_news_pi1[@widget_0][currentPage]=123')
     );
 
     function main($content, $conf) {

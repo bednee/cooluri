@@ -388,7 +388,7 @@ class Link_Translate {
             $temp = array_map('urldecode',$temp);
 
             self::$uri = $temp;
-            $res = array_merge($_GET,$temp);
+            $res = array_merge(is_array($_GET) ? $_GET : Array(),$temp);
             if (!empty(self::$conf->savetranslationto)) {
                 $x = (string)self::$conf->savetranslationto;
                 switch (trim($x)) {
