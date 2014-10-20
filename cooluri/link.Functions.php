@@ -238,7 +238,14 @@ class Link_Func {
           $path = dirname($_SERVER['PHP_SELF']).'/'.$path;
         }
         $path = preg_replace('~^/~','',$path);
-        $path = 'http://'.$_SERVER['HTTP_HOST'].'/'.$path;
+        $path = preg_replace('~^/~','',$path);
+        if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
+            isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+          $protocol = 'https';
+        } else {
+          $protocol = 'http';
+        }
+        $path = $protocol . '://'.$_SERVER['HTTP_HOST'].'/'.$path;
     }
     if (!empty($status)) {
       header('Location: '.$path,true,$status);
