@@ -39,6 +39,7 @@ $TCA['pages']['columns']['tx_cooluri_excludealways'] = array(
 
 $TCA['pages_language_overlay']['columns']['tx_realurl_pathsegment'] = array(
 	'label' => 'LLL:EXT:cooluri/locallang_db.php:pages.tx_cooluri_pathsegment',
+	'exclude' => 1,
 	'config' => array(
 		'type' => 'input',
 		'size' => '30',
