@@ -89,10 +89,10 @@ class Link_Translate {
         if (!empty(self::$conf->cache) && !empty(self::$conf->cache->usecache) && (string)self::$conf->cache->usecache==1) {
             $tp = Link_Func::getTablesPrefix(self::$conf);
             $db = Link_DB::getInstance();
-             
+
             // let's have a look into the cache, we'll look for all possibiltes (meaning trainling slash)
             $tempuri = explode('?',$uri);
-             
+
             $tempuri[0] = Link_Func::prepareLinkForCache($tempuri[0],self::$conf);
 
             $xuri = $tempuri[0];
@@ -419,7 +419,7 @@ class Link_Translate {
             $uriFromCache = $this->getCachedUri($params, $forceUpdate);
             $cacheduri = false;
             $updatecacheid = false;
-            if ($uriFromCache!=null) {
+            if (!is_null($uriFromCache)) {
                 if (is_array($uriFromCache)) {
                     // not good, still needs to be refactored
                     // these paramters are read in the end to
@@ -813,11 +813,11 @@ class Link_Translate {
             }
 
             $path = Link_Func::prepareLinkForCache($path,self::$conf);
-            
+
             foreach ($params as $k=>$v) {
                 unset($originalparams[$k]);
             }
-            
+
             if (!empty($originalparams)) {
                 if (!empty($updatecacheid)) {
                     // first we will update the timestamp (so we will now, when the last uri check was)
@@ -840,7 +840,7 @@ class Link_Translate {
                 }
             }
         }
-        
+
         return $path;
     }
 
