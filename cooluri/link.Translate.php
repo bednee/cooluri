@@ -140,7 +140,6 @@ class Link_Translate {
             $uri = $this->removeFixes($uri);
             // now we remove opening slash
             $uri = preg_replace('~^/*~','',$uri);
-            if (empty($uri)) return;
 
             // first let's look into the caches
             $cachedparams = $this->lookUpInCache($uri);
