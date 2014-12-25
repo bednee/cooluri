@@ -419,7 +419,7 @@ class Link_Translate {
             $uriFromCache = $this->getCachedUri($params, $forceUpdate);
             $cacheduri = false;
             $updatecacheid = false;
-            if ($uriFromCache!=null) {
+            if ($uriFromCache!==null) {
                 if (is_array($uriFromCache)) {
                     // not good, still needs to be refactored
                     // these paramters are read in the end to
