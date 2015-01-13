@@ -259,7 +259,7 @@ class Link_Func {
       if (!empty($lConf->cache->pagenotfound)) {
           switch ((string)$lConf->cache->pagenotfound->behavior['type']) {
               case 'message': $res = (string)$lConf->cache->pagenotfound->behavior; break;
-              case 'page':    $res = file_get_contents((string)$lConf->cache->pagenotfound->behavior); break;
+              case 'page':    $res = t3lib_div::getUrl((string)$lConf->cache->pagenotfound->behavior); break;
               case 'redirect': header((string)$lConf->cache->pagenotfound->status); self::redirect((string)$lConf->cache->pagenotfound->behavior); break;
               case 'userfunc': self::simple_user_func((string)$lConf->cache->pagenotfound->behavior); exit; break;
               default: $res = '';
