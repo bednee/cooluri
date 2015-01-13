@@ -434,7 +434,9 @@ class tx_cooluri
                     $url = 'http://' . $url[0] . '/' . $url[1];
                 }
 
-                Link_Func::redirect($url, 301);
+                if($url !== t3lib_div::getIndpEnv('TYPO3_REQUEST_URL')) {
+                    Link_Func::redirect($url, 301);
+                }
             }
         }
     }
