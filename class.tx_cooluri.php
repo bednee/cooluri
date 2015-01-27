@@ -24,6 +24,10 @@
 
 require_once 'cooluri/link.Main.php';
 
+if (!class_exists('\TYPO3\CMS\Core\Utility\GeneralUtility')) {
+    class_alias('t3lib_div','\TYPO3\CMS\Core\Utility\GeneralUtility');
+}
+
 class tx_cooluri
 {
 
@@ -70,11 +74,11 @@ class tx_cooluri
         if (!empty($params['pObj']->siteScript)) {
             $cond = $params['pObj']->siteScript && substr($params['pObj']->siteScript, 0, 9) != 'index.php' && substr($params['pObj']->siteScript, 0, 1) != '?';
             $paramsinurl = '/' . $params['pObj']->siteScript;
-            t3lib_div::devLog('SITESCRIPT: ' . $paramsinurl, 'CoolUri');
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('SITESCRIPT: ' . $paramsinurl, 'CoolUri');
         } else {
-            $cond = t3lib_div::getIndpEnv('REQUEST_URI') && substr(t3lib_div::getIndpEnv('REQUEST_URI'), 1, 9) != 'index.php' && substr(t3lib_div::getIndpEnv('REQUEST_URI'), 1, 1) != '?';
-            $paramsinurl = t3lib_div::getIndpEnv('REQUEST_URI');
-            t3lib_div::devLog('REQUEST_URI: ' . $paramsinurl, 'CoolUri');
+            $cond = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI') && substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 9) != 'index.php' && substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 1) != '?';
+            $paramsinurl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI');
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('REQUEST_URI: ' . $paramsinurl, 'CoolUri');
         }
 
         // check if the only param is the same as the TYPO3 site root
@@ -87,25 +91,25 @@ class tx_cooluri
             if (!$lt) return;
 
             if (self::$confArray['MULTIDOMAIN'] || Link_Translate::$conf->domainlanguages) {
-                t3lib_div::devLog('MultiDomain on', 'CoolUri');
+                \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('MultiDomain on', 'CoolUri');
                 if (empty(Link_Translate::$conf->cache->prefix)) {
-                    $domain = t3lib_div::getIndpEnv('HTTP_HOST');
+                    $domain = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
                     $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'sys_domain', 'domainName=\'' . $domain . '\' AND redirectTo<>\'\' AND hidden=0');
                     $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
                     if ($row) {
                         $url = $row['redirectTo'] . substr($paramsinurl, 1);
                         if (empty($row['tx_jbstatuscode_code'])) {
-                            Header('Location: ' . t3lib_div::locationHeaderUrl($url));
+                            Header('Location: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url));
                         } else {
-                            Header('Location: ' . t3lib_div::locationHeaderUrl($url), true, $row['tx_jbstatuscode_code']);
+                            Header('Location: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url), true, $row['tx_jbstatuscode_code']);
                         }
                         exit;
                     }
                     self::simplexml_addChild(Link_Translate::$conf->cache, 'prefix', $domain . '@');
-                    t3lib_div::devLog('DOMAIN: ' . $domain, 'CoolUri');
+                    \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('DOMAIN: ' . $domain, 'CoolUri');
                 } else {
-                    Link_Translate::$conf->cache->prefix = t3lib_div::getIndpEnv('HTTP_HOST') . '@';
-                    t3lib_div::devLog('DOMAIN 2: ' . t3lib_div::getIndpEnv('HTTP_HOST'), 'CoolUri');
+                    Link_Translate::$conf->cache->prefix = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST') . '@';
+                    \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('DOMAIN 2: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST'), 'CoolUri');
                 }
             }
 
@@ -114,12 +118,12 @@ class tx_cooluri
             $params['pObj']->id = $pars['id'];
             unset($pars['id']);
             $npars = self::extractArraysFromParams($pars);
-            t3lib_div::stripSlashesOnArray($npars);
+            \TYPO3\CMS\Core\Utility\GeneralUtility::stripSlashesOnArray($npars);
             $params['pObj']->mergingWithGetVars($npars);
 
             // Re-create QUERY_STRING from Get vars for use with typoLink()
             $_SERVER['QUERY_STRING'] = self::decodeSpURL_createQueryString($pars);
-            t3lib_div::devLog('Resolved QS: ' . $_SERVER['QUERY_STRING'], 'CoolUri');
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Resolved QS: ' . $_SERVER['QUERY_STRING'], 'CoolUri');
         }
     }
 
@@ -165,7 +169,7 @@ class tx_cooluri
             $parameters = array_merge($parameters, self::decodeSpURL_createQueryStringParam($value, $var));
         }
 
-        $queryString = t3lib_div::getIndpEnv('QUERY_STRING');
+        $queryString = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('QUERY_STRING');
         if ($queryString) {
             array_push($parameters, $queryString);
         }
@@ -258,7 +262,7 @@ class tx_cooluri
         $decodedUrl = strtr($decodedUrl, array('|' => '%7C'));
 
         $tu = explode('?', $decodedUrl);
-        t3lib_div::devLog('PARAMS URL: ' . $decodedUrl, 'CoolUri');
+        \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('PARAMS URL: ' . $decodedUrl, 'CoolUri');
 
         if (isset($tu[1])) {
             $anch = explode('#', $tu[1]);
@@ -270,7 +274,7 @@ class tx_cooluri
             if (!$lt) return;
 
             if (self::$confArray['MULTIDOMAIN']) {
-                t3lib_div::devLog('MultiDomain on', 'CoolUri');
+                \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('MultiDomain on', 'CoolUri');
                 if (!empty($params['LD']['domain'])) {
                     $domain = $params['LD']['domain'];
                 } elseif (!empty($pars['MP'])) {
@@ -284,7 +288,7 @@ class tx_cooluri
                 } else {
                     $domain = self::getDomain((int)$pars['id']);
                 }
-                t3lib_div::devLog('Domain: ' . $domain, 'CoolUri');
+                \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Domain: ' . $domain, 'CoolUri');
                 if (empty(Link_Translate::$conf->cache->prefix)) {
                     self::simplexml_addChild(Link_Translate::$conf->cache, 'prefix', $domain . '@');
                 } else {
@@ -302,7 +306,7 @@ class tx_cooluri
             }
             $params['LD']['totalURL'] = $lt->params2cool($pars, '', false) . (!empty($anch[1]) ? '#' . $anch[1] : '');
 
-            t3lib_div::devLog('Found URL: ' . $params['LD']['totalURL'], 'CoolUri');
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Found URL: ' . $params['LD']['totalURL'], 'CoolUri');
 
             // urlencode stuff after ?
             $parts = explode('?', $params['LD']['totalURL']);
@@ -318,15 +322,15 @@ class tx_cooluri
                     unset($params['LD']['totalURL'][0]);
                     $afterat = implode('@', $params['LD']['totalURL']);
 
-                    t3lib_div::devLog('In the same domain: ' . $beforeat . '==' . t3lib_div::getIndpEnv('HTTP_HOST'), 'CoolUri');
+                    \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('In the same domain: ' . $beforeat . '==' . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST'), 'CoolUri');
 
-                    if ($beforeat == t3lib_div::getIndpEnv('HTTP_HOST')) {
+                    if ($beforeat == \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST')) {
                         $params['LD']['totalURL'] = $afterat;
                     } else {
                         $params['LD']['totalURL'] = 'http://' . $beforeat . '/' . $afterat;
                     }
                 } else {
-                    t3lib_div::devLog('@ not found in expected MultiDomain URL: ' . $params['LD']['totalURL'], 'CoolUri', 2);
+                    \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('@ not found in expected MultiDomain URL: ' . $params['LD']['totalURL'], 'CoolUri', 2);
                 }
             }
 
@@ -336,13 +340,13 @@ class tx_cooluri
                     $params['LD']['totalURL'] = $GLOBALS['TSFE']->config['config']['absRefPrefix'] . ($params['LD']['totalURL'] != '/' ? $params['LD']['totalURL'] : '');
             }
 
-            t3lib_div::devLog('Result URL: ' . $params['LD']['totalURL'], 'CoolUri');
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Result URL: ' . $params['LD']['totalURL'], 'CoolUri');
         }
     }
 
     public static function getDomain($id)
     {
-        t3lib_div::devLog('Getting domain for ' . $id, 'CoolUri');
+        \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Getting domain for ' . $id, 'CoolUri');
         if ($GLOBALS['TSFE']->showHiddenPage || self::isBEUserLoggedIn()) {
             $enable = ' AND pages.deleted=0';
             $enable2 = ' AND deleted=0';
@@ -354,14 +358,14 @@ class tx_cooluri
         $max = 10;
         while ($max > 0 && $id) {
 
-            t3lib_div::devLog('Looking for domain on page ' . $id, 'CoolUri');
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Looking for domain on page ' . $id, 'CoolUri');
 
             $q = $db->exec_SELECTquery('pages.title, pages.pid, pages.is_siteroot, pages.uid AS id, sys_domain.domainName, sys_domain.redirectTo', 'pages LEFT JOIN sys_domain ON pages.uid=sys_domain.pid', 'pages.uid=' . $id . $enable . ' AND (sys_domain.hidden=0 OR sys_domain.hidden IS NULL)', '', 'sys_domain.sorting');
             $page = $db->sql_fetch_assoc($q);
 
             if ($page['domainName'] && !$page['redirectTo']) {
                 $resDom = preg_replace('~^.*://(.*)/?$~', '\\1', preg_replace('~/$~', '', $page['domainName']));
-                t3lib_div::devLog('Resolved domain: ' . $resDom, 'CoolUri');
+                \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Resolved domain: ' . $resDom, 'CoolUri');
                 return $resDom;
             }
 
@@ -369,22 +373,22 @@ class tx_cooluri
             $count = $db->sql_fetch_assoc($temp);
 
             if ($count['num'] > 0 || $page['is_siteroot'] == 1) {
-                t3lib_div::devLog('Domain missing for ID ' . $id . ', using HTTP_HOST ' . t3lib_div::getIndpEnv('HTTP_HOST'), 'CoolUri');
-                return t3lib_div::getIndpEnv('HTTP_HOST');
+                \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Domain missing for ID ' . $id . ', using HTTP_HOST ' . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST'), 'CoolUri');
+                return \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
             }
 
 
             $id = $page['pid'];
             --$max;
         }
-        t3lib_div::devLog('Domain not found, using HTTP_HOST ' . t3lib_div::getIndpEnv('HTTP_HOST'), 'CoolUri', 2);
-        return t3lib_div::getIndpEnv('HTTP_HOST');
+        \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Domain not found, using HTTP_HOST ' . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST'), 'CoolUri', 2);
+        return \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
     }
 
     public static function goForRedirect($params, $ref)
     {
-        if (empty($_GET['ADMCMD_prev']) && $GLOBALS['TSFE']->config['config']['tx_cooluri_enable'] == 1 && $GLOBALS['TSFE']->config['config']['redirectOldLinksToNew'] == 1 && t3lib_div::getIndpEnv('REQUEST_URI') && (substr(t3lib_div::getIndpEnv('REQUEST_URI'), 1, 9) == 'index.php' || substr(t3lib_div::getIndpEnv('REQUEST_URI'), 1, 1) == '?')) {
-            $ourl = t3lib_div::getIndpEnv('REQUEST_URI');
+        if (empty($_GET['ADMCMD_prev']) && $GLOBALS['TSFE']->config['config']['tx_cooluri_enable'] == 1 && $GLOBALS['TSFE']->config['config']['redirectOldLinksToNew'] == 1 && \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI') && (substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 9) == 'index.php' || substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 1) == '?')) {
+            $ourl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI');
             $ss = explode('?', $ourl);
             if ($ss[1]) {
                 $ss[1] = strtr($ss[1], array('%5B' => '[', '%5D' => ']'));
@@ -466,7 +470,7 @@ class tx_cooluri
         } else {
             $sel = (string)$conf->alias;
         }
-        $sel = t3lib_div::trimExplode(',', $sel);
+        $sel = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $sel);
 
         $max = 15;
 

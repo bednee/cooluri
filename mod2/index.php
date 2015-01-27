@@ -48,8 +48,10 @@ class  tx_cooluri_module2 extends t3lib_SCbase {
     function init() {
         global $BE_USER, $LANG, $BACK_PATH, $TCA_DESCR, $TCA, $CLIENT, $TYPO3_CONF_VARS;
         parent::init();
-        if (t3lib_div::_GP('clear_all_cache')) {
-            $this->include_once[] = PATH_t3lib . 'class.t3lib_tcemain.php';
+        if (class_exists('t3lib_div')) {
+            if (t3lib_div::_GP('clear_all_cache')) {
+                $this->include_once[] = PATH_t3lib . 'class.t3lib_tcemain.php';
+            }
         }
     }
 
@@ -61,16 +63,26 @@ class  tx_cooluri_module2 extends t3lib_SCbase {
      */
     function main() {
         global $BE_USER, $LANG, $BACK_PATH, $TCA_DESCR, $TCA, $CLIENT, $TYPO3_CONF_VARS;
+        if (class_exists('t3lib_div')) {
+            $this->doc = t3lib_div::makeInstance('template');
+            $this->doc->setModuleTemplate(t3lib_extMgm::extPath('cooluri') . 'mod2/mod_template.html');
+            $this->doc->backPath = $BACK_PATH;
+            $this->pageRenderer = $this->doc->getPageRenderer();
+            $this->pageRenderer->addCssFile($BACK_PATH . t3lib_extMgm::extRelPath('cooluri') . 'mod1/style.css');
+            $markers['CONTENT'] = $this->moduleContent();
+            // Build the <body> for the module
+            $this->doc->form = '<form action="'.t3lib_BEfunc::getModuleUrl('web_txcooluriM2').'" method="post">';
+        } else {
+            $this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\CMS\Backend\Template\DocumentTemplate');
+            $this->doc->setModuleTemplate(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('cooluri') . 'mod2/mod_template.html');
+            $this->doc->backPath = $BACK_PATH;
+            $this->pageRenderer = $this->doc->getPageRenderer();
+            $this->pageRenderer->addCssFile($BACK_PATH . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('cooluri') . 'mod1/style.css');
+            $markers['CONTENT'] = $this->moduleContent();
+            // Build the <body> for the module
+            $this->doc->form = '<form action="'.\TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl('web_txcooluriM2').'" method="post">';
+        }
 
-        $this->doc = t3lib_div::makeInstance('template');
-        $this->doc->setModuleTemplate(t3lib_extMgm::extPath('cooluri') . 'mod2/mod_template.html');
-        $this->doc->backPath = $BACK_PATH;
-        $this->pageRenderer = $this->doc->getPageRenderer();
-        $this->pageRenderer->addCssFile($BACK_PATH . t3lib_extMgm::extRelPath('cooluri') . 'mod1/style.css');
-
-        $markers['CONTENT'] = $this->moduleContent();
-        // Build the <body> for the module
-        $this->doc->form = '<form action="'.t3lib_BEfunc::getModuleUrl('user_txcooluriM2').'" method="post">';
         $this->content = $this->doc->startPage('');
         $this->content .= $this->doc->moduleBody($this->pageinfo, null, $markers);
         $this->content = $this->doc->insertStylesAndJS($this->content);
@@ -153,8 +165,12 @@ if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/cooluri
 }
 
 
-// Make instance:
-$SOBE = t3lib_div::makeInstance('tx_cooluri_module2');
+if (class_exists('t3lib_div')) {
+    // Make instance:
+    $SOBE = t3lib_div::makeInstance('tx_cooluri_module2');
+} else {
+    $SOBE = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_cooluri_module2');
+}
 $SOBE->init();
 
 // Include files?

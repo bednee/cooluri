@@ -3,7 +3,7 @@
 	// DO NOT REMOVE OR CHANGE THESE 3 LINES:
 define('TYPO3_MOD_PATH', '../typo3conf/ext/cooluri/mod2/');
 
-$MCONF['name']='user_txcooluriM2';
+$MCONF['name']='web_txcooluriM2';
 
 $MCONF['access']='user,group';
 $MCONF['script']='_DISPATCH';

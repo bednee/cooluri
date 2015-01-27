@@ -61,14 +61,24 @@ class  tx_cooluri_module1 extends t3lib_SCbase {
 
         if ($BE_USER->user['admin']) {
 
-            $this->doc = t3lib_div::makeInstance('template');
-            $this->doc->setModuleTemplate(t3lib_extMgm::extPath('cooluri') . 'mod1/mod_template.html');
-            $this->doc->backPath = $BACK_PATH;
-            $this->pageRenderer = $this->doc->getPageRenderer();
+            if (class_exists('t3lib_div')) {
+                $this->doc = t3lib_div::makeInstance('template');
+                $this->doc->setModuleTemplate(t3lib_extMgm::extPath('cooluri') . 'mod1/mod_template.html');
+                $this->doc->backPath = $BACK_PATH;
+                $this->pageRenderer = $this->doc->getPageRenderer();
 
-            $this->pageRenderer->addCssFile($BACK_PATH . t3lib_extMgm::extRelPath('cooluri') . 'mod1/style.css');
+                $this->pageRenderer->addCssFile($BACK_PATH . t3lib_extMgm::extRelPath('cooluri') . 'mod1/style.css');
+                require_once t3lib_extMgm::extPath('cooluri') . 'cooluri/manager/linkmanager.Main.php';
+            } else {
+                $this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\CMS\Backend\Template\DocumentTemplate');
+                $this->doc->setModuleTemplate(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('cooluri') . 'mod1/mod_template.html');
+                $this->doc->backPath = $BACK_PATH;
+                $this->pageRenderer = $this->doc->getPageRenderer();
 
-            require_once t3lib_extMgm::extPath('cooluri') . 'cooluri/manager/linkmanager.Main.php';
+                $this->pageRenderer->addCssFile($BACK_PATH . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('cooluri') . 'mod1/style.css');
+                require_once \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('cooluri') . 'cooluri/manager/linkmanager.Main.php';
+            }
+
             $this->confArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['cooluri']);
             $bp = str_replace('typo3/', '', $BACK_PATH);
             if (file_exists(PATH_site . $this->confArray['XMLPATH'] . 'CoolUriConf.xml')) {
@@ -81,8 +91,13 @@ class  tx_cooluri_module1 extends t3lib_SCbase {
                 $this->content .= 'XML Config file not found';
                 return;
             }
-            $baseUrl = t3lib_BEfunc::getModuleUrl('tools_txcooluriM1');
-            $lm = new LinkManger_Main($baseUrl.'&', $lt, $BACK_PATH . t3lib_extMgm::extRelPath('cooluri').'mod1/');
+            if (class_exists('t3lib_BEfunc')) {
+                $baseUrl = t3lib_BEfunc::getModuleUrl('tools_txcooluriM1');
+                $lm = new LinkManger_Main($baseUrl.'&', $lt, $BACK_PATH . t3lib_extMgm::extRelPath('cooluri').'mod1/');
+            } else {
+                $baseUrl = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl('tools_txcooluriM1');
+                $lm = new LinkManger_Main($baseUrl.'&', $lt, $BACK_PATH . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('cooluri').'mod1/');
+            }
 
             $this->content .= $lm->menu();
             $this->content .= $lm->main();
@@ -116,8 +131,12 @@ if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/cooluri
 }
 
 
-// Make instance:
-$SOBE = t3lib_div::makeInstance('tx_cooluri_module1');
+if (class_exists('t3lib_div')) {
+    // Make instance:
+    $SOBE = t3lib_div::makeInstance('tx_cooluri_module1');
+} else {
+    $SOBE = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_cooluri_module1');
+}
 $SOBE->init();
 
 // Include files?
