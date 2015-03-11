@@ -73,7 +73,7 @@ class  tx_cooluri_module2 extends t3lib_SCbase {
             // Build the <body> for the module
             $this->doc->form = '<form action="'.t3lib_BEfunc::getModuleUrl('web_txcooluriM2').'" method="post">';
         } else {
-            $this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\CMS\Backend\Template\DocumentTemplate');
+            $this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\DocumentTemplate');
             $this->doc->setModuleTemplate(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('cooluri') . 'mod2/mod_template.html');
             $this->doc->backPath = $BACK_PATH;
             $this->pageRenderer = $this->doc->getPageRenderer();

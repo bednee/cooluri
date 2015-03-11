@@ -70,7 +70,7 @@ class  tx_cooluri_module1 extends t3lib_SCbase {
                 $this->pageRenderer->addCssFile($BACK_PATH . t3lib_extMgm::extRelPath('cooluri') . 'mod1/style.css');
                 require_once t3lib_extMgm::extPath('cooluri') . 'cooluri/manager/linkmanager.Main.php';
             } else {
-                $this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\CMS\Backend\Template\DocumentTemplate');
+                $this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\DocumentTemplate');
                 $this->doc->setModuleTemplate(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('cooluri') . 'mod1/mod_template.html');
                 $this->doc->backPath = $BACK_PATH;
                 $this->pageRenderer = $this->doc->getPageRenderer();
