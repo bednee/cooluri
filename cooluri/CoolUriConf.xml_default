@@ -38,6 +38,19 @@
   </domainlanguages>
   -->
 
+  <!--
+  If you have multidomain and multilanguage, then turn of multidomain and group languages using group attribute like this.
+  Group attribute can be anything
+  -->
+  <!--
+  <domainlanguages>
+      <domain lang="0" group="1">www.example.com</domain>
+      <domain lang="1" group="1">www.example.cz</domain>
+      <domain lang="0" group="2">www.whatever.com</domain>
+      <domain lang="1" group="2">www.whatever.cz</domain>
+  </domainlanguages>  
+  -->
+
   <pagepath>
     <!-- first non-empty value will be used -->
     <title>tx_realurl_pathsegment,alias,subtitle,title</title>

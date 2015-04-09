@@ -273,8 +273,7 @@ class tx_cooluri
             $lt = self::getTranslateInstance();
             if (!$lt) return;
 
-            if (self::$confArray['MULTIDOMAIN']) {
-                \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('MultiDomain on', 'CoolUri');
+            if (self::$confArray['MULTIDOMAIN'] || Link_Translate::$conf->domainlanguages) {
                 if (!empty($params['LD']['domain'])) {
                     $domain = $params['LD']['domain'];
                 } elseif (!empty($pars['MP'])) {
@@ -288,6 +287,10 @@ class tx_cooluri
                 } else {
                     $domain = self::getDomain((int)$pars['id']);
                 }
+            }
+
+            if (self::$confArray['MULTIDOMAIN']) {
+                \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('MultiDomain on', 'CoolUri');
                 \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Domain: ' . $domain, 'CoolUri');
                 if (empty(Link_Translate::$conf->cache->prefix)) {
                     self::simplexml_addChild(Link_Translate::$conf->cache, 'prefix', $domain . '@');
@@ -295,14 +298,7 @@ class tx_cooluri
                     Link_Translate::$conf->cache->prefix = $domain . '@';
                 }
             } elseif (Link_Translate::$conf->domainlanguages) {
-                if (!isset($pars[self::$confArray['LANGID']])) {
-                    $pars[self::$confArray['LANGID']] = $GLOBALS['TSFE']->config['config']['sys_language_uid'] ? $GLOBALS['TSFE']->config['config']['sys_language_uid'] : 0;
-                }
-                foreach (Link_Translate::$conf->domainlanguages->domain as $d) {
-                    if ($d['lang'] == $pars[self::$confArray['LANGID']]) {
-                        Link_Translate::$conf->cache->prefix = (String)$d . '@';
-                    }
-                }
+                self::prefixWithLangDomain($pars, $domain);
             }
             $params['LD']['totalURL'] = $lt->params2cool($pars, '', false) . (!empty($anch[1]) ? '#' . $anch[1] : '');
 
@@ -342,6 +338,36 @@ class tx_cooluri
 
             \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Result URL: ' . $params['LD']['totalURL'], 'CoolUri');
         }
+    }
+
+    public static function prefixWithLangDomain(&$pars, $domain)
+    {
+        if (!isset($pars[self::$confArray['LANGID']])) {
+            $pars[self::$confArray['LANGID']] = $GLOBALS['TSFE']->config['config']['sys_language_uid'] ? $GLOBALS['TSFE']->config['config']['sys_language_uid'] : 0;
+        }
+        $group = false;
+        foreach (Link_Translate::$conf->domainlanguages->domain as $d) {
+            if ($group===false && !empty($d['group'])) {
+                $group = self::findDomainGroup($domain);
+            }
+            if ($group && $d['group'] != $group) {
+                continue;
+            }
+            if ($d['lang'] == $pars[self::$confArray['LANGID']]) {
+                Link_Translate::$conf->cache->prefix = (String)$d . '@';
+                break;
+            }
+        }
+    }
+
+    public static function findDomainGroup($domain)
+    {
+        foreach (Link_Translate::$conf->domainlanguages->domain as $d) {
+            if ((String)$d == $domain) {
+                return (String)$d['group'];
+            }
+        }
+        return false;
     }
 
     public static function getDomain($id)

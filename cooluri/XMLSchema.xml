@@ -135,6 +135,7 @@
                 <xs:element name="domain" type="xs:string">
                     <xs:complexType mixed="true">
                         <xs:attribute name="lang" type="xs:integer"/>
+                        <xs:attribute name="group" type="xs:string"/>
                     </xs:complexType>
                 </xs:element>
             </xs:all>
