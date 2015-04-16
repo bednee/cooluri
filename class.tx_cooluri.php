@@ -413,7 +413,7 @@ class tx_cooluri
 
     public static function goForRedirect($params, $ref)
     {
-        if (empty($_GET['ADMCMD_prev']) && $GLOBALS['TSFE']->config['config']['tx_cooluri_enable'] == 1 && $GLOBALS['TSFE']->config['config']['redirectOldLinksToNew'] == 1 && \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI') && (substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 9) == 'index.php' || substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 1) == '?')) {
+        if (empty($_GET['eID']) && empty($_GET['ADMCMD_prev']) && $GLOBALS['TSFE']->config['config']['tx_cooluri_enable'] == 1 && $GLOBALS['TSFE']->config['config']['redirectOldLinksToNew'] == 1 && \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI') && (substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 9) == 'index.php' || substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 1) == '?')) {
             $ourl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI');
             $ss = explode('?', $ourl);
             if ($ss[1]) {
