@@ -81,9 +81,6 @@ class tx_cooluri
             \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('REQUEST_URI: ' . $paramsinurl, 'CoolUri');
         }
 
-        // check if the only param is the same as the TYPO3 site root
-        if ($paramsinurl == substr(PATH_site, strlen(preg_replace('~/$~', '', $_SERVER['DOCUMENT_ROOT'])))) return;
-
         if ($cond) {
 
             $lt = self::getTranslateInstance();
