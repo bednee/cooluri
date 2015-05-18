@@ -11,7 +11,6 @@ CREATE TABLE pages (
 # Table structure for table "pages_language_overlay"
 #
 CREATE TABLE pages_language_overlay (
-<<<<<<< HEAD
 	tx_realurl_pathsegment varchar(255) DEFAULT '' NOT NULL
 );
 
