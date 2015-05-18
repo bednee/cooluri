@@ -784,7 +784,7 @@ class Link_Translate {
 
     private function transformParamsToQS($params, $entityampersand) {
         if (!empty($params)) {
-            foreach ($params as $k=>$v) $params[$k] = $k.'='.$v;
+            foreach ($params as $k=>$v) $params[$k] = $k.'='.urlencode($v);
             $params = '?'.implode('&',$params);
             if ($entityampersand) $params = str_replace('&','&amp;',$params);
             return $params;
