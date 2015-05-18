@@ -77,13 +77,13 @@ class LinkManger_Main {
       <h2>Force all links to update upon next hit</h2>
       <p>Upon next page hit, all links will be regenerated and if changed, old link will be moved to "oldlinks".</p>
       <form method="post" action="'.$this->file.'mod=all">
-        <input type="submit" name="refresh" value="FORCE UPDATE OF ALL LINKS" />
+        <input type="submit" name="refresh" value="FORCE UPDATE OF ALL LINKS" class="btn btn-warning" />
       </form>
 
       <h2>Start againg</h2>
       <p>Delete everything - cache and oldlinks.</p>
       <form method="post" action="'.$this->file.'mod=all">
-        <input type="submit" name="delete" value="DELETE EVERYTHING AND START AGAIN" />
+        <input type="submit" name="delete" value="DELETE EVERYTHING AND START AGAIN" class="btn btn-danger" />
       </form>
     ';
     return $c;
@@ -220,7 +220,7 @@ class LinkManger_Main {
 	    if ($num>0) {
 	      $c .= '<p class="center">Records found: '.$num.'</p>';
 	      $c .= '<form method="post" action="'.$this->file.'mod=cache">';
-	      $c .= '<table id="list"><tr><th class="left">Cached URI</th><th>Parameters</th><th>Cached</th><th>Last check</th><th>Sticky</th><th>Action</th>';
+	      $c .= '<table id="list" class="table table-striped"><thead><tr><th class="left">Cached URI</th><th>Parameters</th><th>Cached</th><th>Last check</th><th>Sticky</th><th>Action</th></tr></thead>';
 	      while ($row = $this->db->fetch($q)) {
 	        $c .= '<tr>
 	          <td class="left">'.$row['url'].'</td>
@@ -275,7 +275,7 @@ class LinkManger_Main {
         if ($num>0) {
           $c .= '<p class="center">Records found: '.$num.'</p>';
           $c .= '<form method="post" action="'.$this->file.'mod=cache">';
-          $c .= '<table id="list"><tr><th class="left">Old URI</th><th class="left">Cached URI</th><th>Moved to olds</th><th>Action</th>';
+          $c .= '<table id="list" class="table table-striped"><tr><th class="left">Old URI</th><th class="left">Cached URI</th><th>Moved to olds</th><th>Action</th>';
           while ($row = $this->db->fetch($q)) {
             $c .= '<tr>
               <td class="left">'.$row['ourl'].'</td>
@@ -461,11 +461,11 @@ class LinkManger_Main {
     if (empty($cm)) {
         $cm = 'cache';
     }
-    $c = '<ul>';
+    $c = '<nav class="navbar navbar-default"><div class="container-fluid"><ul class="nav navbar-nav">';
     foreach ($mods as $k=>$v) {
-      $c .= '<li><a href="'.$this->file.($k?'mod='.$k:'').'"'.($cm==$k?' class="act"':'').'>'.$v.'</a></li>';
+      $c .= '<li'.($cm==$k?' class="active"':'').'><a href="'.$this->file.($k?'mod='.$k:'').'">'.$v.'</a></li>';
     }
-    $c .= '</ul>';
+    $c .= '</ul></div></nav>';
     return $c;
   }
 
