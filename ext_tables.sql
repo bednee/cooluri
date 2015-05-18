@@ -1,5 +1,5 @@
 #
-# Modifying pages table
+# Table structure for table "pages"
 #
 CREATE TABLE pages (
 	tx_realurl_pathsegment varchar(30) default '',
@@ -8,9 +8,10 @@ CREATE TABLE pages (
 );
 
 #
-# Modifying pages_language_overlay table
+# Table structure for table "pages_language_overlay"
 #
 CREATE TABLE pages_language_overlay (
+<<<<<<< HEAD
 	tx_realurl_pathsegment varchar(255) DEFAULT '' NOT NULL
 );
 
