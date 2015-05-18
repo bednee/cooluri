@@ -296,13 +296,13 @@ class LinkManger_Main {
   }
 
   public function noCache() {
-    $c = '<h1>Welcome to the CoolURIs\' project\'s LinkManager</h1>
+    $c = '<h1>Welcome to the CoolUris\' project\'s LinkManager</h1>
     <p>To be able to work with this LinkManager, you have to have the cache enabled.</p>';
     return $c;
   }
 
   public function welcome() {
-    $c = '<h1>Welcome to the CoolURIs\' LinkManager</h1>
+    $c = '<h1>Welcome to the CoolUris\' LinkManager</h1>
     <p>This manager is part of the URI Transformer project.</p>
     <dl>
       <dt>Author:</dt>
@@ -320,10 +320,10 @@ class LinkManger_Main {
 
   public function link() {
     if (empty($_GET['lid'])) {
-      $c = '<h1>Create new CoolURI</h1>';
+      $c = '<h1>Create new CoolUri</h1>';
       $new = true;
     } else {
-      $c = '<h1>Update this CoolURI</h1>';
+      $c = '<h1>Update this CoolUri</h1>';
       $new = false;
       $id = (int)$_GET['lid'];
     }

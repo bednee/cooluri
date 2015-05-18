@@ -15,8 +15,13 @@ ul li {
 	padding: 0 2px;
 	list-style-type: none;
 }
+ul:after {
+    content: "";
+    display: table;
+    clear: both;
+}
 ul {
-	height: 30px;
+	height: 50px;
 	margin: 0;
 	padding: 0;
 }
@@ -48,6 +53,7 @@ fieldset input.check {
 }
 h1 {
     text-align: left;
+    clear: both;
 }
 h2 {
     margin: 10px 0 0 0;

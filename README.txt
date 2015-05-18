@@ -12,7 +12,7 @@ config.baseURL = http://www.example.com/
 config.tx_cooluri_enable = 1
 config.redirectOldLinksToNew = 1 # if you want to redirect index.php?id=X to a new URI
 
-All configuration is placed in the CoolURIConf.xml. I hope it can be understood even without the manual.
+All configuration is placed in the CoolUriConf.xml. I hope it can be understood even without the manual.
 
 Requirements:
 

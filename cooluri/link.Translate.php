@@ -24,7 +24,7 @@ class Link_Translate {
 
     private static $instance = null;
 
-    public static $uri = Array();
+    public $uri = Array();
 
     public function __construct($xmlconffile = 'CoolUriConf.xml') {
         $conf = new SimpleXMLElement(file_get_contents($xmlconffile));
@@ -387,7 +387,6 @@ class Link_Translate {
             $temp =  empty($cachedparams)?$finaluriparts:$cachedparams;
             $temp = array_map('urldecode',$temp);
 
-            self::$uri = $temp;
             $res = array_merge(is_array($_GET) ? $_GET : Array(),$temp);
             if (!empty(self::$conf->savetranslationto)) {
                 $x = (string)self::$conf->savetranslationto;

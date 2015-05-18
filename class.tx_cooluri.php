@@ -24,10 +24,6 @@
 
 require_once 'cooluri/link.Main.php';
 
-if (!class_exists('\TYPO3\CMS\Core\Utility\GeneralUtility')) {
-    class_alias('t3lib_div','\TYPO3\CMS\Core\Utility\GeneralUtility');
-}
-
 class tx_cooluri
 {
 
@@ -54,12 +50,15 @@ class tx_cooluri
         if (!self::isBEUserLoggedIn() && !empty($_SESSION['coolUriTransformerInstance']) && !empty($_SESSION['coolUriTransformerInstance']->conf)) {
             return $_SESSION['coolUriTransformerInstance'];
         }
-        if (file_exists(self::$confArray['XMLPATH'] . 'CoolUriConf.xml'))
+        if (file_exists(self::$confArray['XMLPATH'] . 'CoolUriConf.xml')) {
             $lt = Link_Translate::getInstance(self::$confArray['XMLPATH'] . 'CoolUriConf.xml');
-        elseif (file_exists(PATH_typo3conf . 'CoolUriConf.xml'))
-            $lt = Link_Translate::getInstance(PATH_typo3conf . 'CoolUriConf.xml'); elseif (file_exists(dirname(__FILE__) . '/cooluri/CoolUriConf.xml'))
-            $lt = Link_Translate::getInstance(dirname(__FILE__) . '/cooluri/CoolUriConf.xml'); else return false;
-
+        } elseif (file_exists(PATH_typo3conf . 'CoolUriConf.xml')) {
+            $lt = Link_Translate::getInstance(PATH_typo3conf . 'CoolUriConf.xml');
+        } elseif (file_exists(dirname(__FILE__) . '/cooluri/CoolUriConf.xml')) {
+            $lt = Link_Translate::getInstance(dirname(__FILE__) . '/cooluri/CoolUriConf.xml');
+        } else {
+            return false;
+        }
         if (!self::isBEUserLoggedIn()) {
             $cc = @clone($lt);
             $_SESSION['coolUriTransformerInstance'] = $cc;
@@ -82,7 +81,9 @@ class tx_cooluri
         }
 
         // check if the only param is the same as the TYPO3 site root
-        if ($paramsinurl == substr(PATH_site, strlen(preg_replace('~/$~', '', $_SERVER['DOCUMENT_ROOT'])))) return;
+        if ($paramsinurl == substr(PATH_site, strlen(preg_replace('~/$~', '', $_SERVER['DOCUMENT_ROOT'])))) {
+            return;
+        }
 
         if ($cond) {
 
@@ -98,10 +99,10 @@ class tx_cooluri
                     $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
                     if ($row) {
                         $url = $row['redirectTo'] . substr($paramsinurl, 1);
-                        if (empty($row['tx_jbstatuscode_code'])) {
-                            Header('Location: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url));
+                        if (empty($row['redirectHttpStatusCode'])) {
+                            header('Location: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url));
                         } else {
-                            Header('Location: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url), true, $row['tx_jbstatuscode_code']);
+                            header('Location: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url), true, $row['redirectHttpStatusCode']);
                         }
                         exit;
                     }
@@ -139,16 +140,13 @@ class tx_cooluri
         if (!is_array($paramArr)) {
             return array($prependString . '=' . $paramArr);
         }
-
         if (count($paramArr) == 0) {
             return array();
         }
-
         $paramList = array();
         foreach ($paramArr as $var => $value) {
             $paramList = array_merge($paramList, self::decodeSpURL_createQueryStringParam($value, $prependString . '[' . $var . ']'));
         }
-
         return $paramList;
     }
 
@@ -163,17 +161,14 @@ class tx_cooluri
         if (!is_array($getVars) || count($getVars) == 0) {
             return $_SERVER['QUERY_STRING'];
         }
-
         $parameters = array();
         foreach ($getVars as $var => $value) {
             $parameters = array_merge($parameters, self::decodeSpURL_createQueryStringParam($value, $var));
         }
-
         $queryString = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('QUERY_STRING');
         if ($queryString) {
             array_push($parameters, $queryString);
         }
-
         return implode('&', $parameters);
     }
 
@@ -278,7 +273,7 @@ class tx_cooluri
                     $domain = $params['LD']['domain'];
                 } elseif (!empty($pars['MP'])) {
                     // found MP call - get ID of page which mounts
-                    $mpSource = (int) substr($pars['MP'],strpos($pars['MP'],'-')+1);
+                    $mpSource = (int)substr($pars['MP'], strpos($pars['MP'], '-') + 1);
                     if ($mpSource > 0) {
                         $domain = self::getDomain($mpSource);
                     } else {
@@ -307,7 +302,7 @@ class tx_cooluri
             // urlencode stuff after ?
             $parts = explode('?', $params['LD']['totalURL']);
             if (isset($parts[1])) {
-                $parts[1] = strtr($parts[1], array('[' => '%5B', ']' => '%5D', '|'=>'%7C'));
+                $parts[1] = strtr($parts[1], array('[' => '%5B', ']' => '%5D', '|' => '%7C'));
             }
             $params['LD']['totalURL'] = implode('?', $parts);
 
@@ -347,7 +342,7 @@ class tx_cooluri
         }
         $group = false;
         foreach (Link_Translate::$conf->domainlanguages->domain as $d) {
-            if ($group===false && !empty($d['group'])) {
+            if ($group === false && !empty($d['group'])) {
                 $group = self::findDomainGroup($domain);
             }
             if ($group && $d['group'] != $group) {
@@ -395,10 +390,13 @@ class tx_cooluri
                 return $resDom;
             }
 
-            $temp = $db->exec_SELECTquery('COUNT(*) as num', 'sys_template', 'deleted=0 AND hidden=0 AND pid=' . $id . ' AND root=1' . $enable2);
-            $count = $db->sql_fetch_assoc($temp);
+            $count = NULL;
+            if ($page['is_siteroot'] != 1) {
+                $temp = $db->exec_SELECTquery('COUNT(*) as num', 'sys_template', 'deleted=0 AND hidden=0 AND pid=' . $id . ' AND root=1' . $enable2);
+                $count = $db->sql_fetch_assoc($temp);
+            }
 
-            if ($count['num'] > 0 || $page['is_siteroot'] == 1) {
+            if ($page['is_siteroot'] == 1 || $count['num'] > 0) {
                 \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Domain missing for ID ' . $id . ', using HTTP_HOST ' . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST'), 'CoolUri');
                 return \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
             }
@@ -424,7 +422,7 @@ class tx_cooluri
             $pageid = $pars['id'];
 
             if (is_null($pageid)) {
-                  // No page id given, so no need to redirect
+                // No page id given, so no need to redirect
                 return;
             } else if (!ctype_digit($pageid)) {
                 $pageid = $GLOBALS['TYPO3_DB']->fullQuoteStr($pageid, 'pages');

@@ -1,15 +1,41 @@
 <?php
 if (!defined('TYPO3_MODE')) die ('Access denied.');
 
-if (TYPO3_MODE == 'BE') {
+if (TYPO3_MODE === 'BE') {
+    require_once \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('cooluri') . 'cooluri/manager/linkmanager.Main.php';
 
-    if (class_exists('t3lib_extMgm')) {
-        t3lib_extMgm::addModule('tools', 'txcooluriM1', '', t3lib_extMgm::extPath($_EXTKEY) . 'mod1/');
-        t3lib_extMgm::addModule('web', 'txcooluriM2', '', t3lib_extMgm::extPath($_EXTKEY) . 'mod2/');
-    } else {
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule('tools', 'txcooluriM1', '', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'mod1/');
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule('web', 'txcooluriM2', '', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'mod2/');
-    }
+    /**
+     * Registers a Backend Module
+     */
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+        'Bednarik.' . $_EXTKEY,
+        'tools',
+        'cool1',	// Submodule key
+        '',						// Position
+        array(
+            'CoolUriMod' => 'everything',
+        ),
+        array(
+            'access' => 'admin',
+            'icon'   => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/mod.gif',
+            'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_cool1.xlf',
+        )
+    );
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+        'Bednarik.' . $_EXTKEY,
+        'web',
+        'fix1',	// Submodule key
+        '',						// Position
+        array(
+            'LinkFix' => 'list,delete',
+        ),
+        array(
+            'access' => 'user,group',
+            'icon'   => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/mod.gif',
+            'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_fix1.xlf',
+        )
+    );
+
 }
 
 $TCA['pages']['columns']['tx_realurl_pathsegment'] = array(
@@ -52,14 +78,7 @@ $TCA['pages_language_overlay']['columns']['tx_realurl_pathsegment'] = array(
     )
 );
 
-if (class_exists('t3lib_div')) {
-    t3lib_extMgm::addToAllTCAtypes('pages', 'tx_realurl_pathsegment,tx_cooluri_exclude,tx_cooluri_excludealways', (t3lib_div::compat_version('4.2') ? '1' : '2'), 'after:nav_title');
-    t3lib_extMgm::addToAllTCAtypes('pages', 'tx_realurl_pathsegment,tx_cooluri_exclude,tx_cooluri_excludealways', (t3lib_div::compat_version('4.2') ? '' : '1,5,') . '4,254', 'after:nav_title');
-    t3lib_extMgm::addToAllTCAtypes('pages_language_overlay', 'tx_realurl_pathsegment', (t3lib_div::compat_version('4.2') ? '1' : '2'), 'after:nav_title');
-    t3lib_extMgm::addToAllTCAtypes('pages_language_overlay', 'tx_realurl_pathsegment', (t3lib_div::compat_version('4.2') ? '' : '1,5,') . '4,254', 'after:nav_title');
-} else {
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages', 'tx_realurl_pathsegment,tx_cooluri_exclude,tx_cooluri_excludealways', '1,2,5,4,254', 'after:nav_title');
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages_language_overlay', 'tx_realurl_pathsegment', '1,2,5,4,254', 'after:nav_title');
-}
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages', 'tx_realurl_pathsegment,tx_cooluri_exclude,tx_cooluri_excludealways', '1,2,5,4,254', 'after:nav_title');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages_language_overlay', 'tx_realurl_pathsegment', '1,2,5,4,254', 'after:nav_title');
 
 ?>

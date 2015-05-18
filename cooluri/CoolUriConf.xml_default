@@ -48,7 +48,7 @@
       <domain lang="1" group="1">www.example.cz</domain>
       <domain lang="0" group="2">www.whatever.com</domain>
       <domain lang="1" group="2">www.whatever.cz</domain>
-  </domainlanguages>  
+  </domainlanguages>
   -->
 
   <pagepath>

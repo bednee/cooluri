@@ -1,0 +1,35 @@
+
+<f:layout name="Default" />
+
+<f:section name="content">
+
+    <f:flashMessages />
+
+    <h2>Find URL</h2>
+
+    <p>This tool can fix problems with wrong URL that are result of duplicate content
+        (e.g. when you delete a page and create a new one with the same name, then its URL
+        points to the deleted one). Just paste any URL here and when found, delete it.
+    </p>
+
+    <f:form action="list">
+        <f:form.textfield name="url" size="100" value="{url}"/>
+        <f:form.submit value="Find URL" class="btn btn-primary"/>
+    </f:form>
+
+
+    <f:for each="{urls}" as="u">
+        <div class="row">
+            <div class="col-md-1">
+                <f:link.action action="delete" arguments="{id : u.id}" class="btn btn-warning btn-sm">DELETE</f:link.action>
+            </div>
+            <div class="col-md-5">
+                {u.url}
+            </div>
+            <div class="col-md-6">
+                {u.parameters}
+            </div>
+        </div>
+    </f:for>
+
+</f:section>

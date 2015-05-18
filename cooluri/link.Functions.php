@@ -225,8 +225,13 @@ class Link_Func {
        * it does the thing that when it finds prefix ending with @ it assumes
        * it's a domain and transforms it into such
        */
-    if (!empty($lConf->cache->prefix) && substr($lConf->cache->prefix,-1)=='@' && substr($path,0,strlen($lConf->cache->prefix))==$lConf->cache->prefix) {
-      $path = 'http://'.str_replace($lConf->cache->prefix,substr($lConf->cache->prefix,0,-1).'/',$path);
+    if (!empty($lConf->cache->prefix) && substr($lConf->cache->prefix,-1)=='@') {
+        if (substr($path,0,strlen($lConf->cache->prefix))==$lConf->cache->prefix) {
+            $path = 'http://'.str_replace($lConf->cache->prefix,substr($lConf->cache->prefix,0,-1).'/',$path);
+        } else {
+            $parts = explode('@',$path);
+            $path = 'http://'.$parts[0].'/'.$parts[1];
+        }
     }
     return $path;
   }

@@ -11,8 +11,8 @@
  ***************************************************************/
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'CoolURI',
-	'description' => 'RealURL alternative. Have nice URLs instead of ugly with parameters. CoolURI has user-friendly XML configuration file. For simple setup, just use the one supplied with extension and you are ready to go.',
+	'title' => 'CoolUri',
+	'description' => 'RealURL alternative. Have nice URLs instead of ugly with parameters. CoolUri has user-friendly XML configuration file. For simple setup, just use the one supplied with extension and you are ready to go.',
 	'category' => 'fe',
 	'shy' => 0,
 	'version' => '1.0.39',
@@ -34,7 +34,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '4.5.0-7.1.99',
+			'typo3' => '6.2.0-7.2.99',
 		),
 		'conflicts' => array(
 		),
