@@ -1,4 +1,5 @@
 <?php
+namespace Bednarik\Cooluri\Core;
 /**
  This file is part of CoolUri.
 
@@ -16,7 +17,7 @@
  along with CoolUri. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Link_Translate {
+class Translate {
 
     public static $conf = null;
 
@@ -27,13 +28,13 @@ class Link_Translate {
     public $uri = Array();
 
     public function __construct($xmlconffile = 'CoolUriConf.xml') {
-        $conf = new SimpleXMLElement(file_get_contents($xmlconffile));
+        $conf = new \SimpleXMLElement(file_get_contents($xmlconffile));
         self::$conf = $conf;
     }
 
     public static function getInstance($xmlconffile = 'CoolUriConf.xml') {
         if (!self::$instance) {
-            self::$instance = new Link_Translate($xmlconffile);
+            self::$instance = new Translate($xmlconffile);
         }
         return self::$instance;
     }
@@ -67,7 +68,7 @@ class Link_Translate {
             }
             // if something was stripped (and something is still left, redirect is needed)
             if (!empty(self::$conf->removeparts['redirect']) && self::$conf->removeparts['redirect']==1)
-            if (!empty($uri) && $uri!=$originaluri) Link_Func::redirect(Link_Func::prepareforRedirect($uri,self::$conf));
+            if (!empty($uri) && $uri!=$originaluri) Functions::redirect(Functions::prepareforRedirect($uri,self::$conf));
         }
         return $uri;
     }
@@ -75,10 +76,10 @@ class Link_Translate {
     private function removeFixes($uri) {
         $temp = explode('?',$uri);
         if (!empty(self::$conf->urlsuffix)) {
-            $temp[0] = preg_replace('~'.Link_Func::addregexpslashes((string)self::$conf->urlsuffix).'$~','',$temp[0]);
+            $temp[0] = preg_replace('~'.Functions::addregexpslashes((string)self::$conf->urlsuffix).'$~','',$temp[0]);
         }
         if (!empty(self::$conf->urlprefix)) {
-            $temp[0] = preg_replace('~^'.Link_Func::addregexpslashes((string)self::$conf->urlprefix).'~','',$temp[0]);
+            $temp[0] = preg_replace('~^'.Functions::addregexpslashes((string)self::$conf->urlprefix).'~','',$temp[0]);
         }
         $uri = implode('?',$temp);
         return $uri;
@@ -87,13 +88,13 @@ class Link_Translate {
     private function lookUpInCache($uri) {
         $cachedparams = null;
         if (!empty(self::$conf->cache) && !empty(self::$conf->cache->usecache) && (string)self::$conf->cache->usecache==1) {
-            $tp = Link_Func::getTablesPrefix(self::$conf);
-            $db = Link_DB::getInstance();
+            $tp = Functions::getTablesPrefix(self::$conf);
+            $db = DB::getInstance();
              
             // let's have a look into the cache, we'll look for all possibiltes (meaning trainling slash)
             $tempuri = explode('?',$uri);
              
-            $tempuri[0] = Link_Func::prepareLinkForCache($tempuri[0],self::$conf);
+            $tempuri[0] = Functions::prepareLinkForCache($tempuri[0],self::$conf);
 
             $xuri = $tempuri[0];
             $tempuri[0] = preg_match('~/$~',$tempuri[0])?substr($tempuri[0],0,strlen($tempuri[0])-1):$tempuri[0].'/'; // add or remove trailing slash
@@ -109,9 +110,9 @@ class Link_Translate {
             $row = $db->fetch($q);
             if ($row) {
                 if (strcmp($row['url'],$xuri)!==0) { // we've got our $tempuri, not $url -> let's redirect
-                    Link_Func::redirect(Link_Func::prepareforRedirect($row['url'].(empty($tempuri[1])?'':'?'.$tempuri[1]),self::$conf));
+                    Functions::redirect(Functions::prepareforRedirect($row['url'].(empty($tempuri[1])?'':'?'.$tempuri[1]),self::$conf));
                 } else {
-                    $cachedparams = Link_Func::cache2params($row['params']);
+                    $cachedparams = Functions::cache2params($row['params']);
                 }
             } else {
                 $vf = '';
@@ -120,9 +121,9 @@ class Link_Translate {
                 $q = $db->query('SELECT '.$tp.'cache.url AS oldlink FROM '.$tp.'oldlinks  LEFT JOIN '.$tp.'cache ON '.$tp.'oldlinks.link_id='.$tp.'cache.id WHERE ('.$tp.'oldlinks.url='.$db->escape($xuri).' OR '.$tp.'oldlinks.url='.$db->escape($tempurix).')'.$vf);
                 $row = $db->fetch($q);
                 if ($row) {
-                    Link_Func::redirect(Link_Func::prepareforRedirect($row['oldlink'].(empty($tempuri[1])?'':'?'.$tempuri[1]),self::$conf),301);
+                    Functions::redirect(Functions::prepareforRedirect($row['oldlink'].(empty($tempuri[1])?'':'?'.$tempuri[1]),self::$conf),301);
                 } elseif (empty(self::$conf->cache->cool2params->translateifnotfound) || self::$conf->cache->cool2params->translateifnotfound!=1) {
-                    Link_Func::pageNotFound(self::$conf);
+                    Functions::pageNotFound(self::$conf);
                 }
             }
         } // end cache
@@ -151,7 +152,7 @@ class Link_Translate {
             //now we have a uri which will be parsed (without unwanted stuff)
             $finaluriparts = Array();
             if (!empty($uri) && empty($cachedparams)) {
-                $db = Link_DB::getInstance();
+                $db = DB::getInstance();
                 // now we remove trailing slash
                 $uri = preg_replace('~/*$~','',$uri);
 
@@ -172,7 +173,7 @@ class Link_Translate {
                     }
                     $coolparts = preg_split('~['.$pathsep.']~',$coolpart);
 
-                    $coolparts = Link_Func::clearGETArray($coolparts);
+                    $coolparts = Functions::clearGETArray($coolparts);
 
                     // at first we go through the predefined parts
                     if (!empty(self::$conf->predefinedparts) && !empty(self::$conf->predefinedparts->part)) {
@@ -193,7 +194,7 @@ class Link_Translate {
                                     // first we find out if it's possible to find anything in the db
                                     $cantranslate = true;
                                     if (!empty($part->lookindb->translatefromif)) {
-                                        $cantranslate = Link_Func::constraint($par,$part->lookindb->translatefromif);
+                                        $cantranslate = Functions::constraint($par,$part->lookindb->translatefromif);
                                     }
                                     // we don't look into db for result
                                     if (empty($part->lookindb) || !$cantranslate) {
@@ -267,7 +268,7 @@ class Link_Translate {
                                 // first we find out if it's possible to find anything in the db
                                 $cantranslate = true;
                                 if (!empty(self::$conf->uriparts->part[$j]->lookindb->translatefromif)) {
-                                    $cantranslate = Link_Func::constraint($coolparts[$i],self::$conf->uriparts->part[$j]->lookindb->translatefromif);
+                                    $cantranslate = Functions::constraint($coolparts[$i],self::$conf->uriparts->part[$j]->lookindb->translatefromif);
                                 }
 
                                 if (!empty(self::$conf->uriparts->part[$j]->lookindb) && $cantranslate) {
@@ -288,7 +289,7 @@ class Link_Translate {
                                     }
                                     /* undocumented */
                                     if ($proceed) {
-                                        $db = Link_DB::getInstance();
+                                        $db = DB::getInstance();
                                         $res = $db->query($sql);
                                         if (!$db->error() && $db->num_rows($res)>0) { // no match found - not translating
                                             $row = $db->fetch_row($res);
@@ -302,7 +303,7 @@ class Link_Translate {
                                 } elseif (!empty(self::$conf->pagepath) && !empty(self::$conf->uriparts->part[$j]['pagepath']) && self::$conf->uriparts->part[$j]['pagepath']=='1') {
                                     // this param is part of the pagepath, let's try that
                                     if ($lastonthepath==null || !empty($finaluriparts[$lastonthepath])) {
-                                        $db = Link_DB::getInstance();
+                                        $db = DB::getInstance();
                                         $sql = 'SELECT '.(string)self::$conf->pagepath->id.' FROM '.(string)self::$conf->pagepath->table;
                                         $sql .= ' WHERE '.(string)self::$conf->pagepath->alias.'=\''.$db->escape($coolparts[$i]).'\'';
                                         if ($lastonthepath==null) $sql .= ' AND '.(string)self::$conf->pagepath->start->param.'='.(string)self::$conf->pagepath->start->value;
@@ -326,7 +327,7 @@ class Link_Translate {
                 }
                 // Cool part done, let's add dirty part
                 if (!empty($dirtypart)) {
-                    $finaluriparts = array_merge($finaluriparts,Link_Func::convertQuerystringToArray($dirtypart));
+                    $finaluriparts = array_merge($finaluriparts,Functions::convertQuerystringToArray($dirtypart));
                 }
                 // Now we'll compose our return pagepath to one variable (i.e. id could be one of cid,sid,lid,tid)
                 if (!empty(self::$conf->pagepath->saveto)) {
@@ -349,10 +350,10 @@ class Link_Translate {
                             $p = (string)$p;
                             if (empty($finaluriparts[$p]))
                             $rqok = false;
-                            elseif (!empty($paramconstraints[$p]) && !Link_Func::constraint($finaluriparts[$p],$paramconstraints[$p]))
+                            elseif (!empty($paramconstraints[$p]) && !Functions::constraint($finaluriparts[$p],$paramconstraints[$p]))
                             $rqok = false;
                             elseif (!empty(self::$conf->pagepath->allparamconstraints)
-                            && !Link_Func::constraint($finaluriparts[$p],self::$conf->pagepath->allparamconstraints))
+                            && !Functions::constraint($finaluriparts[$p],self::$conf->pagepath->allparamconstraints))
                             $rqok = false;
                         }
                     }
@@ -367,11 +368,11 @@ class Link_Translate {
                             if (empty($p['pagepath']) || $p['pagepath']!='1') continue;
                             $p = (string)$p->parameter;
                             if (!empty($finaluriparts[$p])) {
-                                if (!empty($paramconstraints[$p]) && !Link_Func::constraint($finaluriparts[$p],$paramconstraints[$p]))
+                                if (!empty($paramconstraints[$p]) && !Functions::constraint($finaluriparts[$p],$paramconstraints[$p]))
                                 continue;
 
                                 if (!empty(self::$conf->pagepath->allparamconstraints)
-                                && !Link_Func::constraint($finaluriparts[$p],self::$conf->pagepath->allparamconstraints))
+                                && !Functions::constraint($finaluriparts[$p],self::$conf->pagepath->allparamconstraints))
                                 continue;
 
                                 // all tests passed, this is what we're looking for
@@ -452,7 +453,7 @@ class Link_Translate {
 
             $path = $this->getSortedPath($path,$partorder,$tp,$vm,$pp,$pagep,$df);
             $path = $this->saveInCache($uri->params,$path,$uri->originalparams,$updatecacheid,$cacheduri,$entityampersand);
-            return Link_Func::prepareforOutput($path,self::$conf).$this->transformParamsToQS($uri->params, $entityampersand);
+            return Functions::prepareforOutput($path,self::$conf).$this->transformParamsToQS($uri->params, $entityampersand);
         } else {
             return (empty($file)?$_SERVER['PHP_SELF']:$file).(empty($params)?'':'?'.http_build_query($params,'',$entityampersand?'&amp;':'&'));
         }
@@ -460,8 +461,8 @@ class Link_Translate {
 
     private function getCachedUri($params, $forceUpdate) {
         if (!empty(self::$conf->cache) && !empty(self::$conf->cache->usecache) && self::$conf->cache->usecache==1) {
-            $tp = Link_Func::getTablesPrefix(self::$conf);
-            $db = Link_DB::getInstance();
+            $tp = Functions::getTablesPrefix(self::$conf);
+            $db = DB::getInstance();
             // cache is valid for only a sort period of time, after that time we need to do a recheck
             $checkfornew = !empty(self::$conf->cache->params2cool)&&!empty(self::$conf->cache->params2cool->checkforchangeevery)?(string)self::$conf->cache->params2cool->checkforchangeevery:0;
             $originalparams = $params;
@@ -469,11 +470,11 @@ class Link_Translate {
             // we don't cache params
             if (empty(self::$conf->cache->cacheparams) || self::$conf->cache->cacheparams!=1) {
                 if (!self::$coolParamsKeys) {
-                    self::$coolParamsKeys = Link_Func::getCoolParams(self::$conf);
+                    self::$coolParamsKeys = Functions::getCoolParams(self::$conf);
                 }
-                $originalparams = Link_Func::array_intersect_key($originalparams,self::$coolParamsKeys);
+                $originalparams = Functions::array_intersect_key($originalparams,self::$coolParamsKeys);
             }
-            $cacheQ = Link_Func::prepareParamsForCache($originalparams,$tp);
+            $cacheQ = Functions::prepareParamsForCache($originalparams,$tp);
             $q = $db->query('SELECT *, DATEDIFF(NOW(),tstamp) AS daydiff FROM '.$tp.'cache WHERE params='.$cacheQ);
             $row = $db->fetch($q);
 
@@ -485,19 +486,19 @@ class Link_Translate {
                 if (($row['daydiff']>=$checkfornew && $row['sticky']==0) || $forceUpdate) {
                     $updatecacheid = $row['id'];
                     $cacheduri = $row['url'];
-                    Link_Log::log('URL from cache 1 ('.$updatecacheid.'): '.$cacheduri);
+                    Log::log('URL from cache 1 ('.$updatecacheid.'): '.$cacheduri);
                     return Array($updatecacheid, $cacheduri);
                 } else {
                     $qs = '';
                     if (empty(self::$conf->cache->cacheparams) || self::$conf->cache->cacheparams!=1) {
-                        $qsp = Link_Func::array_diff_key($params,$originalparams);
+                        $qsp = Functions::array_diff_key($params,$originalparams);
                         if (!empty($qsp)) {
                             foreach ($qsp as $k=>$v) $qsp[$k] = $k.'='.$v;
                             $qs = '?'.implode('&',$qsp);
                         }
                     }
-                    Link_Log::log('URL from cache 2: '.$row['url']);
-                    return Link_Func::prepareforOutput($row['url'],self::$conf).$qs; // uri found in cache
+                    Log::log('URL from cache 2: '.$row['url']);
+                    return Functions::prepareforOutput($row['url'],self::$conf).$qs; // uri found in cache
                 }
             }
         }  // end cache
@@ -526,14 +527,14 @@ class Link_Translate {
             foreach (self::$conf->predefinedparts->part as $ppart) {
                 if (isset($uri->params[(string)$ppart->parameter])) {
                     $value = $uri->params[(string)$ppart->parameter];
-                    $uf = Link_Func::user_func($ppart, $value, $uri->originalparams);
+                    $uf = Functions::user_func($ppart, $value, $uri->originalparams);
                     if ($uf!==FALSE) {
                         $uri->predefparts[(string)$ppart->parameter] = $uf;
                     } elseif (!empty($ppart['regexp']) && $ppart['regexp']==1) {
                         $uri->predefparts[(string)$ppart->parameter] = preg_replace('~\([^)]+\)~',empty($ppart->lookindb)? $value :
-                                    Link_Func::lookindb($ppart->lookindb->to, $value,$ppart->lookindb,$uri->originalparams),$ppart['key']);
+                                    Functions::lookindb($ppart->lookindb->to, $value,$ppart->lookindb,$uri->originalparams),$ppart['key']);
                     } elseif ($ppart->value == $value) {
-                        $uri->predefparts[(string)$ppart->parameter] = empty($ppart->lookindb)?(string)$ppart['key']:Link_Func::lookindb($ppart->lookindb->to, $value,$ppart->lookindb,$uri->originalparams);
+                        $uri->predefparts[(string)$ppart->parameter] = empty($ppart->lookindb)?(string)$ppart['key']:Functions::lookindb($ppart->lookindb->to, $value,$ppart->lookindb,$uri->originalparams);
                     }
                     unset($uri->params[(string)$ppart->parameter]);
                 }
@@ -563,14 +564,14 @@ class Link_Translate {
     private function translatePagepath(URI $uri) {
         if (!empty(self::$conf->pagepath) && !empty(self::$conf->pagepath->saveto) && !empty($uri->params[(string)self::$conf->pagepath->saveto])) {
 
-            $uf = Link_Func::user_func(self::$conf->pagepath,$uri->originalparams);
+            $uf = Functions::user_func(self::$conf->pagepath,$uri->originalparams);
             if ($uf===FALSE) {
                 $curid = $uri->params[(string)self::$conf->pagepath->saveto];
                 $result = true;
                 $lastpid = null;
-                $db = Link_DB::getInstance();
+                $db = DB::getInstance();
                 $limit = 10;
-                while ($limit>0 && (empty(self::$conf->pagepath->idconstraint)?$result:($result && Link_Func::constraint($curid,self::$conf->pagepath->idconstraint)))) {
+                while ($limit>0 && (empty(self::$conf->pagepath->idconstraint)?$result:($result && Functions::constraint($curid,self::$conf->pagepath->idconstraint)))) {
                     --$limit;
                     if (empty(self::$conf->pagepath->alias)) $sel = (string)self::$conf->pagepath->title;
                     else $sel = (string)self::$conf->pagepath->alias;
@@ -598,9 +599,9 @@ class Link_Translate {
                             ++$k;
                         }
                         if (!empty(self::$conf->sanitize) && self::$conf->sanitize==1) {
-                            $uri->pagepath[] = Link_Func::sanitize_title_with_dashes($val);
+                            $uri->pagepath[] = Functions::sanitize_title_with_dashes($val);
                         } else {
-                            $uri->pagepath[] = Link_Func::URLize($val);
+                            $uri->pagepath[] = Functions::URLize($val);
                         }
 
                     } else {
@@ -621,11 +622,11 @@ class Link_Translate {
             $counter = 0;
             foreach (self::$conf->uriparts->part as $pp) {
                 if (isset($uri->params[(string)$pp->parameter])) {
-                    $uf = Link_Func::user_func($pp,$uri->params[(string)$pp->parameter],$uri->originalparams);
+                    $uf = Functions::user_func($pp,$uri->params[(string)$pp->parameter],$uri->originalparams);
                     if ($uf!==FALSE) {
                         $uri->translatedpagepath[(string)$pp->parameter] = $uf;
                     } else {
-                        $uri->translatedpagepath[(string)$pp->parameter] = (empty($pp->lookindb)?$uri->params[(string)$pp->parameter]:Link_Func::lookindb($pp->lookindb->to,$uri->params[(string)$pp->parameter],$pp->lookindb,$uri->originalparams));
+                        $uri->translatedpagepath[(string)$pp->parameter] = (empty($pp->lookindb)?$uri->params[(string)$pp->parameter]:Functions::lookindb($pp->lookindb->to,$uri->params[(string)$pp->parameter],$pp->lookindb,$uri->originalparams));
                     }
                     unset($uri->params[(string)$pp->parameter]);
                 } elseif (!empty($pp['pagepath']) && $pp['pagepath']==1 && !empty($uri->pagepath[$counter])) {
@@ -655,26 +656,26 @@ class Link_Translate {
         $seps = Array();
         if (!empty(self::$conf->defaults) && !empty(self::$conf->defaults->value)) {
             foreach (self::$conf->defaults->value as $part) {
-                $seps[(string)$part['key']] = Link_Func::getSeparator($part);
+                $seps[(string)$part['key']] = Functions::getSeparator($part);
             }
         }
         if (!empty(self::$conf->predefinedparts) && !empty(self::$conf->predefinedparts->part)) {
             foreach (self::$conf->predefinedparts->part as $part) {
-                $seps[(string)$part->parameter] = Link_Func::getSeparator($part);
+                $seps[(string)$part->parameter] = Functions::getSeparator($part);
             }
         }
         if (!empty(self::$conf->valuemaps) && !empty(self::$conf->valuemaps->valuemap)) {
             foreach (self::$conf->valuemaps->valuemap as $part) {
-                $seps[(string)$part->parameter] = Link_Func::getSeparator($part);
+                $seps[(string)$part->parameter] = Functions::getSeparator($part);
             }
         }
         if (!empty(self::$conf->uriparts) && !empty(self::$conf->uriparts->part)) {
             foreach (self::$conf->uriparts->part as $part) {
                 if (!empty($part['static']) && $part['static']==1) {
-                    $seps[(string)$part->value] = Link_Func::getSeparator($part);
+                    $seps[(string)$part->value] = Functions::getSeparator($part);
                 }
                 else  {
-                    $seps[(string)$part->parameter] = Link_Func::getSeparator($part);
+                    $seps[(string)$part->parameter] = Functions::getSeparator($part);
                 }
             }
         }
@@ -704,7 +705,7 @@ class Link_Translate {
             foreach (self::$conf->defaults->value as $value) {
                 $key = (string)$value['key'];
                 if (!empty($uri->predefparts[$key]) && empty($uri->paramsinorder[$key])) {
-                    $df .= $uri->predefparts[$key].Link_Func::getSeparator($value);
+                    $df .= $uri->predefparts[$key].Functions::getSeparator($value);
                     unset($uri->predefparts[$key]);
                 }
             }
@@ -717,7 +718,7 @@ class Link_Translate {
         if (!empty(self::$conf->valuemaps) && !empty(self::$conf->valuemaps->valuemap)) {
             foreach (self::$conf->valuemaps->valuemap as $part) {
                 if (!empty($uri->predefparts[(string)$part->parameter]) && empty($uri->paramsinorder[(string)$part->parameter])) {
-                    $vm .= $uri->predefparts[(string)$part->parameter].Link_Func::getSeparator($part);
+                    $vm .= $uri->predefparts[(string)$part->parameter].Functions::getSeparator($part);
                     unset($uri->predefparts[(string)$part->parameter]);
                     unset($uri->params[(string)$part->parameter]);
                 }
@@ -731,7 +732,7 @@ class Link_Translate {
         if (!empty(self::$conf->predefinedparts) && !empty(self::$conf->predefinedparts->part)) {
             foreach (self::$conf->predefinedparts->part as $part) {
                 if (!empty($uri->predefparts[(string)$part->parameter]) && empty($uri->paramsinorder[(string)$part->parameter])) {
-                    $pp .= $uri->predefparts[(string)$part->parameter].Link_Func::getSeparator($part);
+                    $pp .= $uri->predefparts[(string)$part->parameter].Functions::getSeparator($part);
                     unset($uri->predefparts[(string)$part->parameter]);
                     unset($uri->params[(string)$part->parameter]);
                 }
@@ -745,10 +746,10 @@ class Link_Translate {
         if (!empty(self::$conf->uriparts) && !empty(self::$conf->uriparts->part)) {
             foreach (self::$conf->uriparts->part as $part) {
                 if (!empty($part['static']) && $part['static']==1 && empty($uri->paramsinorder[(string)$part->value])) {
-                    $tp .= (string)$part->value.Link_Func::getSeparator($part);
+                    $tp .= (string)$part->value.Functions::getSeparator($part);
                 }
                 elseif (isset($uri->translatedpagepath[(string)$part->parameter]) && empty($uri->paramsinorder[(string)$part->parameter])) {
-                    $tp .= $uri->translatedpagepath[(string)$part->parameter].Link_Func::getSeparator($part);
+                    $tp .= $uri->translatedpagepath[(string)$part->parameter].Functions::getSeparator($part);
                     unset($uri->params[(string)$part->parameter]);
                 }
             }
@@ -795,7 +796,7 @@ class Link_Translate {
         // if pagepath is not empty, that means not all pagepaths were added to $translatepagepath. We'll just add it
         $pagep = '';
         if (!empty(self::$conf->pagepath) && !empty(self::$conf->pagepath->saveto) && !empty($uri->pagepath)) {
-            $pagep = implode(Link_Func::getSeparator(),$uri->pagepath).Link_Func::getSeparator();
+            $pagep = implode(Functions::getSeparator(),$uri->pagepath).Functions::getSeparator();
         }
         return $pagep;
     }
@@ -803,15 +804,15 @@ class Link_Translate {
     private function saveInCache($params,$path,$originalparams,$updatecacheid,$cacheduri,$entityampersand) {
         // if cache is allowed, we'll save path to the cache (excluding possible prefix and suffix)
         if (!empty(self::$conf->cache) && !empty(self::$conf->cache->usecache) && self::$conf->cache->usecache==1) {
-            $tp = Link_Func::getTablesPrefix(self::$conf);
-            $db = Link_DB::getInstance();
+            $tp = Functions::getTablesPrefix(self::$conf);
+            $db = DB::getInstance();
 
             $p = '';
             if (!empty(self::$conf->cache->cacheparams) && self::$conf->cache->cacheparams==1 && !empty($params)) {
                 $p = $this->transformParamsToQS($params, $entityampersand);
             }
 
-            $path = Link_Func::prepareLinkForCache($path,self::$conf);
+            $path = Functions::prepareLinkForCache($path,self::$conf);
             
             foreach ($params as $k=>$v) {
                 unset($originalparams[$k]);
@@ -834,7 +835,7 @@ class Link_Translate {
                 } else {
                     $res = $db->query('SELECT * FROM '.$tp.'cache WHERE url='.$db->escape($path.$p));
                     if ($db->num_rows($res)==0) {
-                       $db->query('INSERT INTO '.$tp.'cache(url,params,crdatetime) VALUES('.$db->escape($path.$p).','.Link_Func::prepareParamsForCache($originalparams).',NOW())');
+                       $db->query('INSERT INTO '.$tp.'cache(url,params,crdatetime) VALUES('.$db->escape($path.$p).','.Functions::prepareParamsForCache($originalparams).',NOW())');
                     }
                 }
             }
@@ -862,9 +863,9 @@ class Link_Translate {
             if (!preg_match('~^http://~',$link[2])) {
                 $parts = explode('?',$link[2]);
                 if (empty($parts[1])) return $link[0];
-                $lt = Link_Translate::getInstance();
+                $lt = Translate::getInstance();
                 $link[2] = str_replace('&amp;','&',$link[2]);
-                $link[2] = $lt->params2cool(Link_Func::convertQueryStringToArray($parts[1]),$parts[0]);
+                $link[2] = $lt->params2cool(Functions::convertQueryStringToArray($parts[1]),$parts[0]);
                 unset($link[0]);
                 return implode('',$link);
             } else {
@@ -879,5 +880,3 @@ class Link_Translate {
     }
 
 }
-
-?>

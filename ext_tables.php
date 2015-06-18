@@ -2,8 +2,6 @@
 if (!defined('TYPO3_MODE')) die ('Access denied.');
 
 if (TYPO3_MODE === 'BE') {
-    require_once \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('cooluri') . 'cooluri/manager/linkmanager.Main.php';
-
     /**
      * Registers a Backend Module
      */
@@ -80,5 +78,3 @@ $TCA['pages_language_overlay']['columns']['tx_realurl_pathsegment'] = array(
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages', 'tx_realurl_pathsegment,tx_cooluri_exclude,tx_cooluri_excludealways', '1,2,5,4,254', 'after:nav_title');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('pages_language_overlay', 'tx_realurl_pathsegment', '1,2,5,4,254', 'after:nav_title');
-
-?>

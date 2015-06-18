@@ -1,4 +1,5 @@
 <?php
+namespace Bednarik\Cooluri\Core;
 /**
 	This file is part of CoolUri.
 
@@ -16,7 +17,7 @@
     along with CoolUri. If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Link_DBLayer {
+class DBLayer {
 
 private $conn;
 protected static $_instance = null;
@@ -62,5 +63,3 @@ public function affected_rows() {
 
 
 }
-
-?>

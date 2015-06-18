@@ -1,4 +1,5 @@
 <?php
+namespace Bednarik\Cooluri\Integration;
 /***************************************************************
  *  Copyright notice
  *
@@ -22,9 +23,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once 'cooluri/link.Main.php';
-
-class tx_cooluri
+class CoolUri
 {
 
     private static $pObj = null;
@@ -51,11 +50,11 @@ class tx_cooluri
             return $_SESSION['coolUriTransformerInstance'];
         }
         if (file_exists(self::$confArray['XMLPATH'] . 'CoolUriConf.xml')) {
-            $lt = Link_Translate::getInstance(self::$confArray['XMLPATH'] . 'CoolUriConf.xml');
+            $lt = \Bednarik\Cooluri\Core\Translate::getInstance(self::$confArray['XMLPATH'] . 'CoolUriConf.xml');
         } elseif (file_exists(PATH_typo3conf . 'CoolUriConf.xml')) {
-            $lt = Link_Translate::getInstance(PATH_typo3conf . 'CoolUriConf.xml');
+            $lt = \Bednarik\Cooluri\Core\Translate::getInstance(PATH_typo3conf . 'CoolUriConf.xml');
         } elseif (file_exists(dirname(__FILE__) . '/cooluri/CoolUriConf.xml')) {
-            $lt = Link_Translate::getInstance(dirname(__FILE__) . '/cooluri/CoolUriConf.xml');
+            $lt = \Bednarik\Cooluri\Core\Translate::getInstance(dirname(__FILE__) . '/cooluri/CoolUriConf.xml');
         } else {
             return false;
         }
@@ -91,13 +90,15 @@ class tx_cooluri
 
             if (!$lt) return;
 
-            if (self::$confArray['MULTIDOMAIN'] || Link_Translate::$conf->domainlanguages) {
-                \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('MultiDomain on', 'CoolUri');
-                if (empty(Link_Translate::$conf->cache->prefix)) {
-                    $domain = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
-                    $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'sys_domain', 'domainName=\'' . $domain . '\' AND redirectTo<>\'\' AND hidden=0');
-                    $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-                    if ($row) {
+            if (self::$confArray['MULTIDOMAIN'] || \Bednarik\Cooluri\Core\Translate::$conf->domainlanguages) {
+                $domain = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
+                $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'sys_domain', 'domainName=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($domain) . ' AND hidden=0');
+                $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+                if (!$row) {
+                    return; // Domain is not available, so no translation
+                }
+                if (empty(\Bednarik\Cooluri\Core\Translate::$conf->cache->prefix)) {
+                    if ($row && !empty($row['redirectTo'])) {
                         $url = $row['redirectTo'] . substr($paramsinurl, 1);
                         if (empty($row['redirectHttpStatusCode'])) {
                             header('Location: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url));
@@ -106,11 +107,11 @@ class tx_cooluri
                         }
                         exit;
                     }
-                    self::simplexml_addChild(Link_Translate::$conf->cache, 'prefix', $domain . '@');
+                    self::simplexml_addChild(\Bednarik\Cooluri\Core\Translate::$conf->cache, 'prefix', $domain . '@');
                     \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('DOMAIN: ' . $domain, 'CoolUri');
                 } else {
-                    Link_Translate::$conf->cache->prefix = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST') . '@';
-                    \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('DOMAIN 2: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST'), 'CoolUri');
+                    \Bednarik\Cooluri\Core\Translate::$conf->cache->prefix = $domain . '@';
+                    \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('DOMAIN 2: ' . $domain, 'CoolUri');
                 }
             }
 
@@ -203,7 +204,7 @@ class tx_cooluri
 
     private static function simplexml_addChild($parent, $name, $value = '')
     {
-        $new_child = new SimpleXMLElement("<$name>$value</$name>");
+        $new_child = new \SimpleXMLElement("<$name>$value</$name>");
         $node1 = dom_import_simplexml($parent);
         $dom_sxe = dom_import_simplexml($new_child);
         $node2 = $node1->ownerDocument->importNode($dom_sxe, true);
@@ -261,14 +262,14 @@ class tx_cooluri
 
         if (isset($tu[1])) {
             $anch = explode('#', $tu[1]);
-            $pars = Link_Func::convertQuerystringToArray($tu[1]);
+            $pars = \Bednarik\Cooluri\Core\Functions::convertQuerystringToArray($tu[1]);
 
             $pars['id'] = $params['args']['page']['uid'];
 
             $lt = self::getTranslateInstance();
             if (!$lt) return;
 
-            if (self::$confArray['MULTIDOMAIN'] || Link_Translate::$conf->domainlanguages) {
+            if (self::$confArray['MULTIDOMAIN'] || \Bednarik\Cooluri\Core\Translate::$conf->domainlanguages) {
                 if (!empty($params['LD']['domain'])) {
                     $domain = $params['LD']['domain'];
                 } elseif (!empty($pars['MP'])) {
@@ -287,12 +288,12 @@ class tx_cooluri
             if (self::$confArray['MULTIDOMAIN']) {
                 \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('MultiDomain on', 'CoolUri');
                 \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Domain: ' . $domain, 'CoolUri');
-                if (empty(Link_Translate::$conf->cache->prefix)) {
-                    self::simplexml_addChild(Link_Translate::$conf->cache, 'prefix', $domain . '@');
+                if (empty(\Bednarik\Cooluri\Core\Translate::$conf->cache->prefix)) {
+                    self::simplexml_addChild(\Bednarik\Cooluri\Core\Translate::$conf->cache, 'prefix', $domain . '@');
                 } else {
-                    Link_Translate::$conf->cache->prefix = $domain . '@';
+                    \Bednarik\Cooluri\Core\Translate::$conf->cache->prefix = $domain . '@';
                 }
-            } elseif (Link_Translate::$conf->domainlanguages) {
+            } elseif (\Bednarik\Cooluri\Core\Translate::$conf->domainlanguages) {
                 self::prefixWithLangDomain($pars, $domain);
             }
             $params['LD']['totalURL'] = $lt->params2cool($pars, '', false) . (!empty($anch[1]) ? '#' . $anch[1] : '');
@@ -306,7 +307,7 @@ class tx_cooluri
             }
             $params['LD']['totalURL'] = implode('?', $parts);
 
-            if (self::$confArray['MULTIDOMAIN'] || Link_Translate::$conf->domainlanguages) {
+            if (self::$confArray['MULTIDOMAIN'] || \Bednarik\Cooluri\Core\Translate::$conf->domainlanguages) {
                 if (strpos($params['LD']['totalURL'], '@')) {
                     $params['LD']['totalURL'] = explode('@', $params['LD']['totalURL']);
                     $beforeat = $params['LD']['totalURL'][0];
@@ -341,7 +342,7 @@ class tx_cooluri
             $pars[self::$confArray['LANGID']] = $GLOBALS['TSFE']->config['config']['sys_language_uid'] ? $GLOBALS['TSFE']->config['config']['sys_language_uid'] : 0;
         }
         $group = false;
-        foreach (Link_Translate::$conf->domainlanguages->domain as $d) {
+        foreach (\Bednarik\Cooluri\Core\Translate::$conf->domainlanguages->domain as $d) {
             if ($group === false && !empty($d['group'])) {
                 $group = self::findDomainGroup($domain);
             }
@@ -349,7 +350,7 @@ class tx_cooluri
                 continue;
             }
             if ($d['lang'] == $pars[self::$confArray['LANGID']]) {
-                Link_Translate::$conf->cache->prefix = (String)$d . '@';
+                \Bednarik\Cooluri\Core\Translate::$conf->cache->prefix = (String)$d . '@';
                 break;
             }
         }
@@ -357,7 +358,7 @@ class tx_cooluri
 
     public static function findDomainGroup($domain)
     {
-        foreach (Link_Translate::$conf->domainlanguages->domain as $d) {
+        foreach (\Bednarik\Cooluri\Core\Translate::$conf->domainlanguages->domain as $d) {
             if ((String)$d == $domain) {
                 return (String)$d['group'];
             }
@@ -416,7 +417,7 @@ class tx_cooluri
             $ss = explode('?', $ourl);
             if ($ss[1]) {
                 $ss[1] = strtr($ss[1], array('%5B' => '[', '%5D' => ']'));
-                $pars = Link_Func::convertQuerystringToArray($ss[1]);
+                $pars = \Bednarik\Cooluri\Core\Functions::convertQuerystringToArray($ss[1]);
             }
 
             $pageid = $pars['id'];
@@ -446,10 +447,10 @@ class tx_cooluri
                 if (!$lt) return;
 
                 if (self::$confArray['MULTIDOMAIN']) {
-                    if (empty(Link_Translate::$conf->cache->prefix)) {
-                        self::simplexml_addChild(Link_Translate::$conf->cache, 'prefix', self::getDomain((int)$pars['id']) . '@');
+                    if (empty(\Bednarik\Cooluri\Core\Translate::$conf->cache->prefix)) {
+                        self::simplexml_addChild(\Bednarik\Cooluri\Core\Translate::$conf->cache, 'prefix', self::getDomain((int)$pars['id']) . '@');
                     } else {
-                        Link_Translate::$conf->cache->prefix = self::getDomain((int)$pars['id']) . '@';
+                        \Bednarik\Cooluri\Core\Translate::$conf->cache->prefix = self::getDomain((int)$pars['id']) . '@';
                     }
                 }
                 $url = $lt->params2coolForRedirect($pars);
@@ -457,12 +458,12 @@ class tx_cooluri
                 $parts = explode('?', $url);
                 if (empty($parts[0])) return;
 
-                if (self::$confArray['MULTIDOMAIN'] || Link_Translate::$conf->domainlanguages) {
+                if (self::$confArray['MULTIDOMAIN'] || \Bednarik\Cooluri\Core\Translate::$conf->domainlanguages) {
                     $url = explode('@', $url);
                     $url = 'http://' . $url[0] . '/' . $url[1];
                 }
 
-                Link_Func::redirect($url, 301);
+                \Bednarik\Cooluri\Core\Functions::redirect($url, 301);
             }
         }
     }
@@ -538,11 +539,11 @@ class tx_cooluri
             }
 
             if (!empty($conf->sanitize) && $conf->sanitize == 1) {
-                $pagepath[] = Link_Func::sanitize_title_with_dashes($title);
+                $pagepath[] = \Bednarik\Cooluri\Core\Functions::sanitize_title_with_dashes($title);
             } elseif (!empty($conf->t3conv) && $conf->t3conv == 1) {
-                $pagepath[] = Link_Func::specCharsToASCII($title);
+                $pagepath[] = \Bednarik\Cooluri\Core\Functions::specCharsToASCII($title);
             } elseif (!isset($conf->urlize) || $conf->urlize != 0) {
-                $pagepath[] = Link_Func::URLize($title);
+                $pagepath[] = \Bednarik\Cooluri\Core\Functions::URLize($title);
             } else {
                 $pagepath[] = urlencode($title);
             }
@@ -557,7 +558,7 @@ class tx_cooluri
 
     public static function getPageTitle($conf, $value)
     {
-        return tx_cooluri::getPageTitleBE($conf, $value);
+        return CoolUri::getPageTitleBE($conf, $value);
         // this function didn't work for pages with restricted access.
         // The BE function should work everywhere
     }

@@ -1,4 +1,5 @@
 <?php
+namespace Bednarik\Cooluri\Core;
 /**
     This file is part of CoolUri.
 
@@ -16,7 +17,7 @@
     along with CoolUri. If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Link_Func {
+class Functions {
 
   /*
   * creates array from a query string
@@ -106,14 +107,14 @@ class Link_Func {
   private static function replaceParameterInSQL($match) {
     $m = explode('=',$match[1]);
     $param = isset(self::$allparams[$m[0]])?self::$allparams[$m[0]]:(isset($m[1])?$m[1]:'');
-    $param = Link_DB::escape($param);
+    $param = DB::escape($param);
     return $param;
   }
 
   public static function lookindb($sql,$param='',$conf=null,$allparams=array()) {
     self::$allparams = $allparams;
 
-    $escapedParam = Link_DB::escape($param);
+    $escapedParam = DB::escape($param);
 
     $pieces = explode('$1',$sql);
     foreach ($pieces as $k=>$v) {
@@ -121,7 +122,7 @@ class Link_Func {
     }
     $sql = implode($escapedParam,$pieces);
 
-    $db = Link_DB::getInstance();
+    $db = DB::getInstance();
     $res = $db->query($sql);
     if (mysql_error() || !$res) {
         return $param;
@@ -160,7 +161,7 @@ class Link_Func {
     foreach ($params as $k=>$v) {
     	$newparams[(string)$k] = (string)$v;
     }
-    return Link_DB::escape(serialize($newparams),$tp);
+    return DB::escape(serialize($newparams),$tp);
   }
 
   public static function cache2params($cache) {
@@ -640,5 +641,3 @@ public static function remove_accents($string) {
         return $string;
     }
 }
-
-?>

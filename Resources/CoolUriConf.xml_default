@@ -21,7 +21,7 @@
         redirect - will redirect to a certaing URL
         message - will output a message
         userfunc - user function is called, there's a default implementation of standard TYPO3 404 handling
-        <behavior type="userfunc">tx_cooluri->pageNotFound</behavior>
+        <behavior type="userfunc">Bednarik\Cooluri\Integration\Cooluri->pageNotFound</behavior>
       -->
     </pagenotfound>
   </cache>
@@ -58,7 +58,7 @@
     <saveto>id</saveto><!-- READONLY -->
     <default>0</default><!-- READONLY -->
     
-    <userfunc>tx_cooluri->getPageTitle</userfunc>
+    <userfunc>Bednarik\Cooluri\Integration\Cooluri->getPageTitle</userfunc>
     <t3conv>1</t3conv>
   </pagepath>
  

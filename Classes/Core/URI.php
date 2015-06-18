@@ -1,4 +1,5 @@
 <?php
+namespace Bednarik\Cooluri\Core;
 /**
  *  Copyright notice
  *
@@ -51,5 +52,3 @@ class URI {
 
 
 }
-
-?>

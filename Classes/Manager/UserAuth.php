@@ -1,4 +1,6 @@
 <?php
+namespace Bednarik\Cooluri\Manager;
+
 /**
 	This file is part of CoolUri.
 
@@ -16,12 +18,10 @@
     along with CoolUri. If not, see <http://www.gnu.org/licenses/>.
 */
 
-class LinkManager_UserAuth {
+class UserAuth {
 
   public static function isLogged() {
     return true;
   }
   
 }
-
-?>

@@ -45,7 +45,7 @@ class CoolUriModController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContr
             return;
         }
         $baseUrl = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl('tools_CooluriCool1');
-        $lm = new \LinkManger_Main($baseUrl.'&', $lt, $GLOBALS['BACK_PATH'] . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('cooluri').'Resources/Public/CoolUriMod/');
+        $lm = new \Bednarik\Cooluri\Manager\Main($baseUrl.'&', $lt, $GLOBALS['BACK_PATH'] . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('cooluri').'Resources/Public/CoolUriMod/');
 
         $c = $lm->menu();
         $c .= $lm->main();

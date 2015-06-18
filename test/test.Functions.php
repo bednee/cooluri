@@ -35,11 +35,11 @@ include '../cooluri/link.Functions.php';
 $sql = 'SELECT title FROM tx_news_domain_model_news WHERE deleted=\'0\' AND hidden=\'0\' AND (uid=$1 OR l10n_parent=$1) AND sys_language_uid={L=0}';
 $param = '70';
 
-Link_Func::lookindb($sql,$param, new stdClass(), Array('L'=>'2'));
+\Bednarik\Cooluri\Core\Functions::lookindb($sql,$param, new stdClass(), Array('L'=>'2'));
 
-class Link_DB {
+class DB {
     public static function getInstance() {
-        return new Link_DB();
+        return new DB();
     }
     public static function query($sql) {
         echo($sql);

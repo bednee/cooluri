@@ -1,4 +1,5 @@
 <?php
+namespace Bednarik\Cooluri\Core;
 /**
 This file is part of CoolUri.
 
@@ -16,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with CoolUri. If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Link_Log
+class Log
 {
 
     public static function log($message, $severity = 0) {
@@ -28,5 +29,3 @@ class Link_Log
     }
 
 }
-
-?>

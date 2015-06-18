@@ -1,4 +1,5 @@
 <?php
+namespace Bednarik\Cooluri\Core;
 /**
 	This file is part of CoolUri.
 
@@ -16,7 +17,7 @@
     along with CoolUri. If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Link_DB extends Link_DBLayer {
+class DB extends DBLayer {
   
   public function __construct() {
 
@@ -30,5 +31,3 @@ class Link_DB extends Link_DBLayer {
   }
   
 }
-
-?>
