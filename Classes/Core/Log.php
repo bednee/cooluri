@@ -21,11 +21,7 @@ class Log
 {
 
     public static function log($message, $severity = 0) {
-        if (class_exists('t3lib_div')) {
-            t3lib_div::devLog($message, 'CoolUri CORE', $severity);
-        } else {
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog($message, 'CoolUri CORE', $severity);
-        }
+        \TYPO3\CMS\Core\Utility\GeneralUtility::devLog($message, 'CoolUri CORE', $severity);
     }
 
 }
