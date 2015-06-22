@@ -92,7 +92,7 @@ class CoolUri
 
             if (self::$confArray['MULTIDOMAIN'] || \Bednarik\Cooluri\Core\Translate::$conf->domainlanguages) {
                 $domain = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
-                $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'sys_domain', 'domainName=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($domain) . ' AND hidden=0');
+                $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'sys_domain', 'domainName=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($domain, 'sys_domain') . ' AND hidden=0');
                 $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
                 if (!$row) {
                     return; // Domain is not available, so no translation
