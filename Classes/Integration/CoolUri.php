@@ -368,6 +368,11 @@ class CoolUri
 
     public static function getDomain($id)
     {
+        static $domains = array();
+        if (isset($domains[$id])) {
+            return $domains[$id];
+        }
+
         \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Getting domain for ' . $id, 'CoolUri');
         if ($GLOBALS['TSFE']->showHiddenPage || self::isBEUserLoggedIn()) {
             $enable = ' AND pages.deleted=0';
@@ -388,6 +393,7 @@ class CoolUri
             if ($page['domainName'] && !$page['redirectTo']) {
                 $resDom = preg_replace('~^.*://(.*)/?$~', '\\1', preg_replace('~/$~', '', $page['domainName']));
                 \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Resolved domain: ' . $resDom, 'CoolUri');
+                $domains[$id] = $resDom;
                 return $resDom;
             }
 
@@ -399,6 +405,7 @@ class CoolUri
 
             if ($page['is_siteroot'] == 1 || $count['num'] > 0) {
                 \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Domain missing for ID ' . $id . ', using HTTP_HOST ' . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST'), 'CoolUri');
+                $domains[$id] = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
                 return \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
             }
 
@@ -407,6 +414,7 @@ class CoolUri
             --$max;
         }
         \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Domain not found, using HTTP_HOST ' . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST'), 'CoolUri', 2);
+        $domains[$id] = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
         return \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
     }
 

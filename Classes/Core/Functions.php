@@ -200,7 +200,8 @@ class Functions {
           $path = (string)$lConf->urlprefix.$path;
       }
       if (self::excludeInclude($path,$lConf->urlsuffix)) {
-          $path .= (string)$lConf->urlsuffix;
+          $suffix = (string)$lConf->urlsuffix;
+          $path .= trim($suffix);
       }
       return $path;
   }
@@ -452,10 +453,12 @@ public static function specCharsToASCII($title) {
 
 public static function prepareLinkForCache($path,$lConf) {
   if (!empty($lConf->cache->prefix)) {
-    $path = ($lConf->cache->prefix).$path;
+      $prefix = (string)$lConf->cache->prefix;
+      $path = trim($prefix).$path;
   }
   if (!empty($lConf->cache->suffix)) {
-    $path .= ($lConf->cache->suffix);
+      $suffix = (string)$lConf->cache->suffix;
+      $path .= trim($suffix);
   }
   if (!empty($lConf->removetrailingslash) && $lConf->removetrailingslash==1) {
       $temppath = self::removeSlash($path);

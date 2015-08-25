@@ -76,10 +76,14 @@ class Translate {
     private function removeFixes($uri) {
         $temp = explode('?',$uri);
         if (!empty(self::$conf->urlsuffix)) {
-            $temp[0] = preg_replace('~'.Functions::addregexpslashes((string)self::$conf->urlsuffix).'$~','',$temp[0]);
+            $suffix = (string)self::$conf->urlsuffix;
+            $suffix = trim($suffix);
+            $temp[0] = preg_replace('~'.Functions::addregexpslashes($suffix).'$~','',$temp[0]);
         }
         if (!empty(self::$conf->urlprefix)) {
-            $temp[0] = preg_replace('~^'.Functions::addregexpslashes((string)self::$conf->urlprefix).'~','',$temp[0]);
+            $prefix = (string)self::$conf->urlprefix;
+            $prefix = trim($prefix);
+            $temp[0] = preg_replace('~^'.Functions::addregexpslashes($prefix).'~','',$temp[0]);
         }
         $uri = implode('?',$temp);
         return $uri;
