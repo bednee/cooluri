@@ -222,8 +222,8 @@ class Main {
 	      $c .= '<table id="list" class="table table-striped"><thead><tr><th class="left">Cached URI</th><th>Parameters</th><th>Cached</th><th>Last check</th><th>Sticky</th><th>Action</th></tr></thead>';
 	      while ($row = $this->db->fetch($q)) {
 	        $c .= '<tr>
-	          <td class="left">'.$row['url'].'</td>
-	          <td>'.$this->serializedArrayToQueryString($row['params']).'</td>
+	          <td class="left">'.htmlspecialchars($row['url']).'</td>
+	          <td>'.htmlspecialchars($this->serializedArrayToQueryString($row['params'])).'</td>
 	          <td>'.$row['crdatetime'].'</td>
 	          <td>'.$row['tstamp'].'</td>
 	          <td>'.($row['sticky']?'YES':'NO').'</td>
@@ -277,8 +277,8 @@ class Main {
           $c .= '<table id="list" class="table table-striped"><tr><th class="left">Old URI</th><th class="left">Cached URI</th><th>Moved to olds</th><th>Action</th>';
           while ($row = $this->db->fetch($q)) {
             $c .= '<tr>
-              <td class="left">'.$row['ourl'].'</td>
-              <td class="left">'.$row['lurl'].'</td>
+              <td class="left">'.htmlspecialchars($row['ourl']).'</td>
+              <td class="left">'.htmlspecialchars($row['lurl']).'</td>
               <td>'.$row['tstamp'].'</td>
               <td class="nowrap"><a href="'.$this->file.'mod=delete&amp;old&amp;lid='.$row['id'].'&amp;from=old:'.$let.'"><img src="'.$this->resPath.'img/button_garbage.gif" alt="Delete" title="Delete" onclick="return confirm(\'Are you sure?\');" /></a>
               </td>
