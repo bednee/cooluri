@@ -18,23 +18,21 @@ CREATE TABLE pages_language_overlay (
 CREATE TABLE link_cache (
 	id int(10) unsigned NOT NULL auto_increment,
 	params blob,
-	url char(255),
-	tstamp TIMESTAMP default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+	url varchar(255) default '',
+	tstamp timestamp default 0,
 	crdatetime datetime default NULL,
-	sticky tinyint(1) unsigned default 0,
+	sticky tinyint(3) unsigned default '0',
 
 	PRIMARY KEY (id),
-	KEY url (url(255)),
 	KEY params (params(255))
 );
 
 CREATE TABLE link_oldlinks (
 	id int(10) unsigned NOT NULL auto_increment,
-	link_id int(10) unsigned NOT NULL default 0,
-	url char(255),
-	tstamp timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+	link_id int(10) unsigned NOT NULL default '0',
+	url varchar(255) default '',
+	tstamp timestamp default 0,
 
 	PRIMARY KEY (id),
-	UNIQUE KEY id (id),
-	KEY url (url(255))
+	UNIQUE KEY id (id)
 );
