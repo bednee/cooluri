@@ -9,7 +9,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'author_email' => 'info@bednarik.org',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '6.2.0-7.3.99',
+			'typo3' => '6.2.0-7.6.99',
 		),
 	),
 );
