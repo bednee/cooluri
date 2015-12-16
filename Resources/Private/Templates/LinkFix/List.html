@@ -5,23 +5,20 @@
 
     <f:flashMessages />
 
-    <h2>Find URL</h2>
+    <h2><f:translate key="LLL:EXT:cooluri/Resources/Private/Language/locallang_fix1.xlf:mlang_labels_form_heading" /></h2>
 
-    <p>This tool can fix problems with wrong URL that are result of duplicate content
-        (e.g. when you delete a page and create a new one with the same name, then its URL
-        points to the deleted one). Just paste any URL here and when found, delete it.
-    </p>
+    <p><f:translate key="LLL:EXT:cooluri/Resources/Private/Language/locallang_fix1.xlf:mlang_labels_form_description" /></p>
 
     <f:form action="list">
         <f:form.textfield name="url" size="100" value="{url}"/>
-        <f:form.submit value="Find URL" class="btn btn-primary"/>
+        <f:form.submit value="{f:translate(key:'LLL:EXT:cooluri/Resources/Private/Language/locallang_fix1.xlf:mlang_labels_form_button_find' )}" class="btn btn-primary"/>
     </f:form>
 
 
     <f:for each="{urls}" as="u">
         <div class="row">
             <div class="col-md-1">
-                <f:link.action action="delete" arguments="{id : u.id}" class="btn btn-warning btn-sm">DELETE</f:link.action>
+                <f:link.action action="delete" arguments="{id : u.id}" class="btn btn-warning btn-sm"><f:translate key="LLL:EXT:cooluri/Resources/Private/Language/locallang_fix1.xlf:mlang_labels_form_button_delete" /></f:link.action>
             </div>
             <div class="col-md-5">
                 {u.url}

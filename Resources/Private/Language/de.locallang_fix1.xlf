@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2015-12-16T08:38:49Z" product-name="CoolUriMod">
+        <header/>
+        <body>
+            <trans-unit id="mlang_tabs_tab">
+                <target>URL Korrektur</target>
+            </trans-unit>
+            <trans-unit id="mlang_labels_tabdescr">
+                <target>Einfache Funktion um falsche URLs im Zusammenhang mit CoolUri zu beheben</target>
+            </trans-unit>
+            <trans-unit id="mlang_labels_tablabel">
+                <target>URL Korrektur</target>
+            </trans-unit>
+            <trans-unit id="mlang_labels_form_heading">
+                <target>URL suchen</target>
+            </trans-unit>
+            <trans-unit id="mlang_labels_form_description">
+                <target>Diese Funktion kann Probleme beheben mit falschen URLs die durch doppelte Inhalte entstehen (bspw. wenn man eine Seite löscht und eine neue mit dem selben Namen erstellt, zeigt die URL noch auf die gelöschte). Geben Sie einfach die URL hier ein, und löschen Sie sie, sobald sie gefunden wurde.</target>
+            </trans-unit>
+            <trans-unit id="mlang_labels_form_button_find">
+                <target>URL suchen</target>
+            </trans-unit>
+            <trans-unit id="mlang_labels_form_button_delete">
+                <target>Löschen</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
