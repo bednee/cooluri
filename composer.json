@@ -1,0 +1,28 @@
+{
+    "name": "bednee/cooluri",
+    "description": "RealURL alternative, have nice URLs instead of ugly with parameters.",
+    "authors": [
+        {
+            "name": "Jan Bednarik",
+            "email": "info@bednarik.org"
+        }
+    ],
+    "type": "typo3-cms-extension",
+    "require": {
+        "typo3/cms-core": ">= 6.2.0, <= 7.6.99"
+    },
+    "replace": {
+        "cooluri": "self.version",
+        "typo3-ter/cooluri": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+          "Bednarik\\Cooluri\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+          "Bednarik\\Cooluri\\Tests\\": "Tests/"
+        }
+    }
+}
