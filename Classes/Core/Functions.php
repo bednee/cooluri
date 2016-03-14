@@ -124,7 +124,7 @@ class Functions {
 
     $db = DB::getInstance();
     $res = $db->query($sql);
-    if (mysql_error() || !$res) {
+    if ($db->error() || !$res) {
         return $param;
     }
     $row = $db->fetch_row($res);
