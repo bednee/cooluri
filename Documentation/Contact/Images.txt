@@ -1,0 +1,7 @@
+﻿.. |img-1|      image:: ../Images/manual_html_img-1.png
+.. :align: left
+.. :border: 0
+.. :height: 32
+.. :id: Graphic1
+.. :name: Graphic1
+.. :width: 102
