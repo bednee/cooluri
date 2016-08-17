@@ -2,7 +2,7 @@ This README is a quick how-to, for more information read the extenstion manual a
 
 Configuration:
 
-- Copy EXT:cooluri/cooluri/CoolUriConf.xml_default file to typo3conf/CoolUriConf.xml
+- Copy EXT:cooluri/Resources/CoolUriConf.xml_default file to typo3conf/CoolUriConf.xml
 
 - use the same .htaccess as with the RealURL
 - install extension
