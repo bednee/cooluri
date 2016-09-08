@@ -100,10 +100,13 @@ class CoolUri
                 if (empty(\Bednarik\Cooluri\Core\Translate::$conf->cache->prefix)) {
                     if ($row && !empty($row['redirectTo'])) {
                         $url = $row['redirectTo'] . substr($paramsinurl, 1);
+                        $path = \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url);
+                        $path = str_replace('http://','//',$path);
+                        $path = str_replace('https://','//',$path);
                         if (empty($row['redirectHttpStatusCode'])) {
-                            header('Location: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url));
+                            header('Location: ' . $path);
                         } else {
-                            header('Location: ' . \TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl($url), true, $row['redirectHttpStatusCode']);
+                            header('Location: ' . $path, true, $row['redirectHttpStatusCode']);
                         }
                         exit;
                     }

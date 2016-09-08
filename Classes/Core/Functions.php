@@ -246,14 +246,10 @@ class Functions {
         }
         $path = preg_replace('~^/~','',$path);
         $path = preg_replace('~^/~','',$path);
-        if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
-            isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
-          $protocol = 'https';
-        } else {
-          $protocol = 'http';
-        }
-        $path = $protocol . '://'.$_SERVER['HTTP_HOST'].'/'.$path;
+        $path = '//'.$_SERVER['HTTP_HOST'].'/'.$path;
     }
+    $path = str_replace('http://','//',$path);
+    $path = str_replace('https://','//',$path);
     if (!empty($status)) {
       header('Location: '.$path,true,$status);
     } else {
