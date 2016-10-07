@@ -114,7 +114,7 @@ class Translate {
             $row = $db->fetch($q);
             if ($row) {
                 if (strcmp($row['url'],$xuri)!==0) { // we've got our $tempuri, not $url -> let's redirect
-                    Functions::redirect(Functions::prepareforRedirect($row['url'].(empty($tempuri[1])?'':'?'.$tempuri[1]),self::$conf));
+                    Functions::redirect(Functions::prepareforRedirect($row['url'].(empty($tempuri[1])?'':'?'.$tempuri[1]),self::$conf),301);
                 } else {
                     $cachedparams = Functions::cache2params($row['params']);
                 }
