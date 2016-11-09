@@ -379,10 +379,8 @@ class CoolUri
         \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Getting domain for ' . $id, 'CoolUri');
         if ($GLOBALS['TSFE']->showHiddenPage || self::isBEUserLoggedIn()) {
             $enable = ' AND pages.deleted=0';
-            $enable2 = ' AND deleted=0';
         } else {
             $enable = ' AND pages.deleted=0 AND pages.hidden=0';
-            $enable2 = ' AND deleted=0 AND hidden=0';
         }
         $db = & $GLOBALS['TYPO3_DB'];
         $max = 10;
@@ -402,8 +400,7 @@ class CoolUri
 
             $count = NULL;
             if ($page['is_siteroot'] != 1) {
-                $temp = $db->exec_SELECTquery('COUNT(*) as num', 'sys_template', 'deleted=0 AND hidden=0 AND pid=' . $id . ' AND root=1' . $enable2);
-                $count = $db->sql_fetch_assoc($temp);
+                $count = self::getTemplateCount($id);
             }
 
             if ($page['is_siteroot'] == 1 || $count['num'] > 0) {
@@ -419,6 +416,27 @@ class CoolUri
         \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Domain not found, using HTTP_HOST ' . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST'), 'CoolUri', 2);
         $domains[$id] = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
         return \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST');
+    }
+
+    protected static function getTemplateCount($pagId)
+    {
+        static $countCache = [];
+        if (isset($countCache[$pagId])) {
+            return $countCache[$pagId];
+        }
+
+        if ($GLOBALS['TSFE']->showHiddenPage || self::isBEUserLoggedIn()) {
+            $enable = ' AND deleted=0';
+        } else {
+            $enable = ' AND deleted=0 AND hidden=0';
+        }
+
+
+        $db = &$GLOBALS['TYPO3_DB'];
+        $temp = $db->exec_SELECTquery('COUNT(*) as num', 'sys_template',
+            'deleted=0 AND hidden=0 AND pid=' . $pagId . ' AND root=1' . $enable);
+        $countCache[$pagId] = (int)$db->sql_fetch_assoc($temp);
+        return $countCache[$pagId];
     }
 
     public static function goForRedirect($params, $ref)
@@ -517,8 +535,7 @@ class CoolUri
             $q = $db->exec_SELECTquery('*', 'pages', 'uid=' . $id . $enable);
             $page = $db->sql_fetch_assoc($q);
 
-            $temp = $db->exec_SELECTquery('COUNT(*) as num', 'sys_template', 'deleted=0 AND hidden=0 AND pid=' . $id . ' AND root=1' . $enable);
-            $count = $db->sql_fetch_assoc($temp);
+            $count = self::getTemplateCount($id);
 
             if ($count['num'] > 0 || $page['is_siteroot'] == 1) {
                 return $pagepath;

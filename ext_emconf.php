@@ -3,7 +3,7 @@
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'CoolUri',
 	'description' => 'RealURL alternative. Have nice URLs instead of ugly with parameters. CoolUri has user-friendly XML configuration file. For simple setup, just use the one supplied with extension and you are ready to go.',
-	'version' => '1.1.2',
+	'version' => '1.1.3',
 	'state' => 'stable',
 	'author' => 'Jan Bednarik',
 	'author_email' => 'info@bednarik.org',
