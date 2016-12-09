@@ -1,5 +1,9 @@
 <?php
 namespace Bednarik\Cooluri\Integration;
+
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\HttpUtility;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -322,7 +326,11 @@ class CoolUri
                     if ($beforeat == \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST')) {
                         $params['LD']['totalURL'] = $afterat;
                     } else {
-                        $params['LD']['totalURL'] = 'http://' . $beforeat . '/' . $afterat;
+                        $protocol = 'http';
+                        if ($params['args']['page']['url_scheme'] == HttpUtility::SCHEME_HTTPS || $params['args']['page']['url_scheme'] == 0 && GeneralUtility::getIndpEnv('TYPO3_SSL')) {
+                            $protocol = 'https';
+                        }
+                        $params['LD']['totalURL'] = $protocol.'://' . $beforeat . '/' . $afterat;
                     }
                 } else {
                     \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('@ not found in expected MultiDomain URL: ' . $params['LD']['totalURL'], 'CoolUri', 2);
