@@ -832,7 +832,7 @@ class Translate {
                         $db->query('UPDATE '.$tp.'cache SET url='.$db->escape($path.$p).' WHERE id='.(int)$updatecacheid);
 
                         // if the path has changed back, no need to store it in the oldlinks
-                        // prevets from overflooding the DB when tampering with configuration
+                        // prevents from flooding the DB when tampering with configuration
                         $db->query('DELETE FROM '.$tp.'oldlinks WHERE url='.$db->escape($path.$p));
 
                     }

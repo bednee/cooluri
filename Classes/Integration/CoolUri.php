@@ -127,7 +127,7 @@ class CoolUri
             $params['pObj']->id = $pars['id'];
             unset($pars['id']);
             $npars = self::extractArraysFromParams($pars);
-            \TYPO3\CMS\Core\Utility\GeneralUtility::stripSlashesOnArray($npars);
+            self::stripSlashesOnArray($npars);
             $params['pObj']->mergingWithGetVars($npars);
 
             // Re-create QUERY_STRING from Get vars for use with typoLink()
@@ -621,6 +621,19 @@ class CoolUri
     public static function pageNotFound()
     {
         $GLOBALS['TSFE']->pageNotFoundAndExit();
+    }
+
+    private static function stripSlashesOnArray(array &$theArray)
+    {
+        foreach ($theArray as &$value) {
+            if (is_array($value)) {
+                self::stripSlashesOnArray($value);
+            } else {
+                $value = stripslashes($value);
+            }
+        }
+        unset($value);
+        reset($theArray);
     }
 }
 
