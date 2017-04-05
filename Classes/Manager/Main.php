@@ -41,7 +41,7 @@ class Main {
 
     if (!$this->enable) return $this->noCache();
 
-    $content = '<div class="container-fluid">';
+    $content = '<div class="container-fluid-off">';
 
 //    if (empty($_GET['mod'])) {
 //      $content .= $this->welcome();
@@ -78,23 +78,36 @@ class Main {
             $this->db->query('DELETE FROM '.$this->table.'oldlinks WHERE sticky != 1');
          }
       }
-      $c .= '<div class="succes"><p>Done.</p></div>';
+      $c .= '<div class="text-center"><p class="text-success bg-success" style="padding: 10px;">Done.</p></div>';
     }
     $c .= '
-      <h2>Force all links to update upon next hit</h2>
-      <p>Upon next page hit, all links will be regenerated and if changed, any old link will be moved to "oldlinks".</p>
-      <form method="post" action="'.$this->file.'mod=all">
-        <input type="submit" name="refresh" value="FORCE UPDATE OF ALL LINKS" class="btn btn-warning">
-      </form>
+    <div class="row">
+       <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">Force all links to update upon next hit</div>
+          <div class="panel-body">
+            <p>Upon next page hit, all links will be regenerated and if changed, any old link will be moved to "oldlinks".</p>
+              <form method="post" action="'.$this->file.'mod=all">
+                <input type="submit" name="refresh" value="FORCE UPDATE OF ALL LINKS" class="btn btn-warning">
+              </form>
+          </div>
+        </div>
 
-      <h2>Start again</h2>
-      <p>Delete everything - cache and oldlinks.</p>
-      <form method="post" action="'.$this->file.'mod=all" class="form-inline">
-        <input type="submit" name="delete" value="DELETE EVERYTHING AND START AGAIN" class="btn btn-danger">
-        <label class="checkbox">
-            <input type="checkbox" name="sticky" value="1"> Delete sticky too
-        </label>
-      </form>
+        <div class="panel panel-default">
+          <div class="panel-heading">Start again</div>
+          <div class="panel-body">
+            <p>Delete everything - cache and oldlinks.</p>
+          <form method="post" action="'.$this->file.'mod=all">
+          <div class="form-group">
+            <label>
+              <input type="checkbox" name="sticky" value="1"> Delete sticky too
+            </label>
+            </div>
+            <input type="submit" name="delete" value="DELETE EVERYTHING AND START AGAIN" class="btn btn-danger">
+          </form>
+          </div>
+        </div>
+    </div></div>
     ';
     return $c;
   }
@@ -151,7 +164,7 @@ class Main {
       if (!$q || $this->db->affected_rows()==0) {
           $c = '<div class="error"><p>The sticky value hasn\'t been changed because the link doesn\'t exist (or maybe a DB error).</p></div>';
       } else {
-        $c = '<div class="succes"><p>The sticky value has been changed.</p></div>';
+        $c = '<div class="bg-success text-center"><p class="text-success" style="padding:15px;">The sticky value has been changed.</p></div>';
       }
     }
     $c .= $this->getBackLink();
@@ -200,7 +213,7 @@ class Main {
 
   private function getBackLink() {
     if (!empty($_GET['from'])) $from = explode(':',$_GET['from']);
-    return '<p class="center"><a href="'.$this->file.(empty($from[0])?'':'mod='.$from[0].(empty($from[1])?'':'&amp;l='.$from[1])).'">&lt;&lt; Back</a></p>';
+    return '<p><a class="btn btn-primary" href="'.$this->file.(empty($from[0])?'':'mod='.$from[0].(empty($from[1])?'':'&amp;l='.$from[1])).'">&lt;&lt; Back</a></p>';
   }
 
   public function cache() {
@@ -213,20 +226,31 @@ class Main {
 
     $c = '<h1>Cached links</h1>';
 
-    $c .= '<p class="center">';
-    $c .= '<b><a href="'.$this->file.'mod=cache&amp;l='.urlencode('%').'">all</a></b>
+    $c .= '<p>';
+    $c .= '<a class="badge badge-bprimary" href="'.$this->file.'mod=cache&amp;l='.urlencode('%').'">All</a>
     ';
     for ($i=ord('A');$i<=ord('Z');$i++) {
-      $c .= '<b><a href="'.$this->file.'mod=cache&amp;l='.strtoupper(chr($i)).'">'.strtoupper(chr($i)).'</a></b>
+      $c .= '<a class="badge" href="'.$this->file.'mod=cache&amp;l='.strtoupper(chr($i)).'">'.strtoupper(chr($i)).'</a>
       ';
     }
-    $c .= '</p>';
-    $c .= '<form method="post" action="'.$this->file.'" class="form-inline">
-      <label>Link starts with: <input type="text" name="l" class="a form-control" value="'.htmlspecialchars($let).'"></label>
-      <input type="hidden" name="mod" value="cache">
-      <input type="submit" value="Search" class="submit btn btn-primary">
-      <label><input type="checkbox" name="domain" value="1" '.(!empty($_REQUEST['domain'])?' checked="checked"':'').'> Ignore domain</label>
-    </form>';
+    $c .= '</p> <hr>';
+    $c .= '<div class="row">
+        <div class="col-md-6">
+        <form method="post" action="'.$this->file.'">
+      <label>Link starts with:</label>
+      <div class="form-group">
+          <div class="input-group">
+            <input type="text" name="l" class="a form-control" value="'.htmlspecialchars($let).'">
+            <input type="hidden" name="mod" value="cache">
+            <span class="input-group-btn">
+                <input type="submit" value="Search" class="submit btn btn-primary">
+            </span>
+          </div>
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" name="domain" value="1" '.(!empty($_REQUEST['domain'])?' checked="checked"':'').'> Ignore domain</label>
+      </div>
+    </form></div></div>';
 
     if (!empty($let)) {
 
@@ -238,13 +262,13 @@ class Main {
     	}
 	    $num = $this->db->num_rows($q);
 	    if ($num>0) {
-	      $c .= '<p class="center">Records found: '.$num.'</p>';
+	      $c .= '<p class="center text-info">Records found: '.$num.'</p>';
 	      $c .= '<form method="post" action="'.$this->file.'mod=cache">';
-	      $c .= '<table id="list" class="table table-striped"><thead><tr><th class="left">Cached URI</th><th>Parameters</th><th>Cached</th><th>Last check</th><th>Sticky</th><th>Action</th></tr></thead>';
+	      $c .= '<table id="list" class="table table-striped" style="table-layout: fixed;"><thead><tr><th class="left" style="width: 30%;">Cached URI</th><th style="width: 30%;">Parameters</th><th style="width: 10%;">Cached</th><th style="width: 10%;">Last check</th><th style="width: 5%;">Sticky</th><th style="width: 20%;">Action</th></tr></thead>';
 	      while ($row = $this->db->fetch($q)) {
 	        $c .= '<tr>
-	          <td class="left">'.htmlspecialchars($row['url']).'</td>
-	          <td>'.htmlspecialchars($this->serializedArrayToQueryString($row['params'])).'</td>
+	          <td class="left" style="word-wrap: break-word;">'.htmlspecialchars($row['url']).'</td>
+	          <td style="word-wrap: break-word;">'.htmlspecialchars($this->serializedArrayToQueryString($row['params'])).'</td>
 	          <td>'.$row['crdatetime'].'</td>
 	          <td>'.$row['tstamp'].'</td>
 	          <td>'.($row['sticky']?'YES':'NO').'</td>
@@ -260,11 +284,11 @@ class Main {
 	      }
 	      $c .= '</table></form>';
 	    } else {
-	      $c .= '<p>No cached links found.</p>';
+	      $c .= '<p class="text-info">No cached links found.</p>';
 	    }
 
     } else {
-    	$c .= '<p>Input any filter. Use "%" to get all links.';
+    	$c .= '<p class="text-muted">Input any filter. Use "%" to get all links.</p>';
     }
     return $c;
   }
@@ -274,18 +298,25 @@ class Main {
 
     $c = '<h1>Old links</h1>';
 
-    $c .= '<p class="center">';
-    $c .= '<b><a href="'.$this->file.'mod=old&amp;l=%">all</a></b>
+    $c .= '<p>';
+    $c .= '<a class="badge badge-bprimary" href="'.$this->file.'mod=old&amp;l=%">all</a>
     ';
     for ($i=ord('A');$i<=ord('Z');$i++) {
-      $c .= '<b><a href="'.$this->file.'mod=old&amp;l='.strtoupper(chr($i)).'">'.strtoupper(chr($i)).'</a></b>
+      $c .= '<a class="badge" href="'.$this->file.'mod=old&amp;l='.strtoupper(chr($i)).'">'.strtoupper(chr($i)).'</a>
       ';
     }
-    $c .= '</p>';
-    $c .= '<form method="post" action="'.$this->file.'mod=old" class="form-inline">
-          <label>Link starts with: <input type="text" name="l" class="a form-control" value="'.htmlspecialchars($let).'"></label>
-          <input type="hidden" name="mod" value="cache">
-          <input type="submit" value="Search" class="submit btn btn-primary">
+    $c .= '</p> <hr>';
+    $c .= '<div class="row">
+                   <div class="col-md-6">
+    <form method="post" action="'.$this->file.'mod=old">
+          <label>Link starts with:</label>
+          <div class="input-group">
+            <input type="text" name="l" class="a form-control" value="'.htmlspecialchars($let).'">
+            <input type="hidden" name="mod" value="cache">
+            <span class="input-group-btn">
+                <input type="submit" value="Search" class="submit btn btn-primary">
+            </span>
+          </div></div></div>
     </form>';
 
     if (!empty($let)) {
@@ -294,7 +325,7 @@ class Main {
 
         $num = $this->db->num_rows($q);
         if ($num>0) {
-          $c .= '<p class="center">Records found: '.$num.'</p>';
+          $c .= '<p class="center text-info">Records found: '.$num.'</p>';
           $c .= '<form method="post" action="'.$this->file.'mod=cache">';
           $c .= '<table id="list" class="table table-striped"><tr><th class="left">Old URI</th><th class="left">Cached URI</th><th>Moved to olds</th><th>Sticky</th><th>Action</th>';
           while ($row = $this->db->fetch($q)) {
@@ -313,10 +344,10 @@ class Main {
           }
           $c .= '</table></form>';
         } else {
-          $c .= '<p>No old links found.</p>';
+          $c .= '<p class="text-info">No old links found.</p>';
         }
     } else {
-        $c .= '<p>Input any filter. Use "%" to get all links.</p>';
+        $c .= '<p class="text-muted">Input any filter. Use "%" to get all links.</p>';
     }
     return $c;
   }
@@ -364,7 +395,7 @@ class Main {
       $data = $_POST;
       $data = array_map('trim',$data);
       if (empty($data['url']) || empty($data['params'])) {
-        $c .= '<div class="error"><p>You must fill all inputs.</p></div>';
+        $c .= '<div class="error"><p class="text-danger">You must fill all inputs.</p></div>';
       } else {
         $params = \Bednarik\Cooluri\Core\Functions::convertQuerystringToArray($data['params']);
         $cp = \Bednarik\Cooluri\Core\Functions::prepareParamsForCache($params);
@@ -422,26 +453,31 @@ class Main {
       }
     }
 
-    $c .= '<form method="post" action="'.$this->file.'mod=link'.($new?'':'&amp;lid='.$id).'">
-    <fieldset>
-    <legend>URI details</legend>
-    <div class="form-group">
-        <label for="url">URI:</label>
-        <input type="text" name="url" id="url" class="form-control" value="'.(empty($data['url'])?'':htmlspecialchars($data['url'])).'">
+    $c .= '
+    <div class="row">
+       <div class="col-md-6">
+           <form method="post" action="'.$this->file.'mod=link'.($new?'':'&amp;lid='.$id).'">
+            <fieldset>
+            <legend>URI details</legend>
+            <div class="form-group">
+                <label for="url">URI:</label>
+                <input type="text" name="url" id="url" class="form-control" value="'.(empty($data['url'])?'':htmlspecialchars($data['url'])).'">
+            </div>
+            <div class="form-group">
+                <label for="params">Parameters (query string: id=1&amp;type=2):</label>
+                <input type="text" name="params" id="params" class="form-control" value="'.(empty($data['params'])?'':htmlspecialchars($data['params'])).'">
+            </div>
+            <div class="form-group">
+                <label for="sticky">
+                    <input type="checkbox" class="check" name="sticky" id="sticky" value="1" '.(empty($data['sticky'])?'':' checked="checked"').'>
+                    Sticky (won\'t be updated)
+                </label>
+            </div>
+            </fieldset>
+            <input type="submit" value=" '.($new?'Save new URI':'Update this URI').' " class="submit btn btn-primary">
+        </form>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="params">Parameters (query string: id=1&amp;type=2):</label>
-        <input type="text" name="params" id="params" class="form-control" value="'.(empty($data['params'])?'':htmlspecialchars($data['params'])).'">
-    </div>
-    <div class="form-group">
-        <label for="sticky">
-            <input type="checkbox" class="check" name="sticky" id="sticky" value="1" '.(empty($data['sticky'])?'':' checked="checked"').'>
-            Sticky (won\'t be updated)
-        </label>
-    </div>
-    </fieldset>
-    <input type="submit" value=" '.($new?'Save new URI':'Update this URI').' " class="submit btn btn-primary">
-    </form>
     ';
     return $c;
   }
@@ -454,7 +490,7 @@ class Main {
     if (!empty($_POST)) {
       $id = (int)$_POST['to'];
       if (empty($id) || empty($_POST['url'])) {
-        $c .= '<div class="error"><p>All fields are required.</p></div>';
+        $c .= '<div class="error"><p class="text-danger">All fields are required.</p></div>';
       } else {
         $this->db->query('INSERT INTO '.$this->table.'oldlinks(link_id,url,sticky)
                                         VALUES('.$id.',
@@ -466,32 +502,37 @@ class Main {
 
     $allq = $this->db->query('SELECT * FROM '.$this->table.'cache ORDER BY url');
 
-    $c .= '<form method="post" action="'.$this->file.'mod=redirect">
-    <fieldset>
-    <legend>Redirect details</legend>
-    <div class="form-group">
-        <label for="url">From:</label>
-        <input type="text" name="url" id="url" class="form-control">
+    $c .= '
+    <div class="row">
+       <div class="col-md-6">
+        <form method="post" action="'.$this->file.'mod=redirect">
+        <fieldset>
+        <legend>Redirect details</legend>
+        <div class="form-group">
+            <label for="url">From:</label>
+            <input type="text" name="url" id="url" class="form-control">
+        </div>
+        <div class="form-group">
+        <label for="to">To:</label>
+        <select name="to" id="to" class="form-control">
+        ';
+        while ($row = $this->db->fetch($allq)) {
+          $c .= '<option value="'.$row['id'].'">'.$row['url'].'</option>
+          ';
+        }
+        $c .= '</select>
+        </div>
+        <div class="form-group">
+            <label for="sticky">
+                <input type="checkbox" class="check" name="sticky" id="sticky" value="1" '.(empty($data['sticky'])?'':' checked="checked"').'>
+                Sticky (won\'t be deleted upon Delete all action)
+            </label>
+        </div>
+        </fieldset>
+        <input type="submit" value="Submit this redirect" class="submit btn btn-primary">
+        </form>
+        </div>
     </div>
-    <div class="form-group">
-    <label for="to">To:</label>
-    <select name="to" id="to" class="form-control">
-    ';
-    while ($row = $this->db->fetch($allq)) {
-      $c .= '<option value="'.$row['id'].'">'.$row['url'].'</option>
-      ';
-    }
-    $c .= '</select>
-    </div>
-    <div class="checkbox">
-        <label for="sticky">
-            <input type="checkbox" class="check" name="sticky" id="sticky" value="1" '.(empty($data['sticky'])?'':' checked="checked"').'>
-            Sticky (won\'t be deleted upon Delete all action)
-        </label>
-    </div>
-    </fieldset>
-    <input type="submit" value="Submit this redirect" class="submit btn btn-primary">
-    </form>
     ';
     return $c;
   }
@@ -506,11 +547,11 @@ class Main {
     if (empty($cm)) {
         $cm = 'cache';
     }
-    $c = '<nav class="navbar navbar-default" style="margin-bottom: 20px"><div class="container-fluid"><ul class="nav nav-tabs">';
+    $c = '<ul class="nav nav-tabs" style="margin-bottom: 20px">';
     foreach ($mods as $k=>$v) {
       $c .= '<li'.($cm==$k?' class="active"':'').'><a href="'.$this->file.($k?'mod='.$k:'').'">'.$v.'</a></li>';
     }
-    $c .= '</ul></div></nav>';
+    $c .= '</ul>';
     return $c;
   }
 
