@@ -39,7 +39,7 @@
   -->
 
   <!--
-  If you have multidomain and multilanguage, then turn of multidomain and group languages using group attribute like this.
+  If you have multidomain and multilanguage, then turn off multidomain and group languages using group attribute like this.
   Group attribute can be anything
   -->
   <!--
