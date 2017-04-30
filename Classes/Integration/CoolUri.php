@@ -543,8 +543,11 @@ class CoolUri
             $q = $db->exec_SELECTquery('*', 'pages', 'uid=' . $id . $enable);
             $page = $db->sql_fetch_assoc($q);
 
-            $count = self::getTemplateCount($id);
+            if (!$page) {
+                break;
+            }
 
+            $count = self::getTemplateCount($id);
             if ($count['num'] > 0 || $page['is_siteroot'] == 1) {
                 return $pagepath;
             }
@@ -558,7 +561,6 @@ class CoolUri
                     $page = array_merge($page, $lo);
                 }
             }
-            if (!$page) break;
 
             if (($page['tx_cooluri_exclude'] == 1 && !empty($pagepath)) || $page['tx_cooluri_excludealways']) {
                 ++$max;
@@ -587,7 +589,9 @@ class CoolUri
 
             --$max;
 
-            if (!empty($conf->maxsegments) && count($pagepath) >= (int)$conf->maxsegments) $max = 0;
+            if (!empty($conf->maxsegments) && count($pagepath) >= (int)$conf->maxsegments) {
+                $max = 0;
+            }
         }
         return $pagepath;
     }
