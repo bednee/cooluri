@@ -173,7 +173,8 @@ class CoolUri
         foreach ($getVars as $var => $value) {
             $parameters = array_merge($parameters, self::decodeSpURL_createQueryStringParam($value, $var));
         }
-        $queryString = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('QUERY_STRING');
+        // Don't use GeneralUtility::getIndpEnv() to avoid cache generation before overriding $_SERVER['QUERY_STRING']
+        $queryString = $_SERVER['QUERY_STRING'];
         if ($queryString) {
             array_push($parameters, $queryString);
         }
