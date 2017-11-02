@@ -27,14 +27,20 @@ class Main {
   private $table = 'link_';
   private $lt;
 
-  public function __construct($file,$conf,$res = '') {
+  public function __construct($file = false, $conf = false, $res = '') {
     $this->db = \Bednarik\Cooluri\Core\DB::getInstance();
     $this->file = $file;
     $this->resPath = $res;
 
-    $this->lt = \Bednarik\Cooluri\Core\Translate::getInstance($conf);
-    $this->enable = (!empty(\Bednarik\Cooluri\Core\Translate::$conf->cache) && !empty(\Bednarik\Cooluri\Core\Translate::$conf->cache->usecache) && \Bednarik\Cooluri\Core\Translate::$conf->cache->usecache==1);
-    if (!empty(\Bednarik\Cooluri\Core\Translate::$conf->cache->tablesprefix)) $this->table = \Bednarik\Cooluri\Core\Translate::$conf->cache->tablesprefix;
+    if ($conf !== false) {
+        $this->lt = \Bednarik\Cooluri\Core\Translate::getInstance($conf);
+        $this->enable = (!empty(\Bednarik\Cooluri\Core\Translate::$conf->cache) && !empty(\Bednarik\Cooluri\Core\Translate::$conf->cache->usecache) && \Bednarik\Cooluri\Core\Translate::$conf->cache->usecache==1);
+        if (!empty(\Bednarik\Cooluri\Core\Translate::$conf->cache->tablesprefix)) {
+            $this->table = \Bednarik\Cooluri\Core\Translate::$conf->cache->tablesprefix;
+        }
+    } else {
+        $this->enable = false;
+    }
   }
 
   public function main() {
