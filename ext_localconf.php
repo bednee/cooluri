@@ -12,6 +12,11 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_befunc.php']['viewO
 // registering scheduler task
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks']['Bednarik\\Cooluri\\Task\\ForceUpdateTask'] = array(
     'extension' => $_EXTKEY,
-    'title' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_cool1.xlf:mlang_scheduler',
-    'description' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_cool1.xlf:mlang_scheduler_desc'
+    'title' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_cool1.xlf:mlang_scheduler_force',
+    'description' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_cool1.xlf:mlang_scheduler_force_desc'
+);
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks']['Bednarik\\Cooluri\\Task\\DeleteAllTask'] = array(
+    'extension' => $_EXTKEY,
+    'title' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_cool1.xlf:mlang_scheduler_delete',
+    'description' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_cool1.xlf:mlang_scheduler_delete_desc'
 );

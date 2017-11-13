@@ -12,11 +12,17 @@
 			<trans-unit id="mlang_labels_tablabel">
 				<source>CoolURI</source>
 			</trans-unit>
-			<trans-unit id="mlang_scheduler">
+			<trans-unit id="mlang_scheduler_force">
 				<source>CoolURI Force Update</source>
 			</trans-unit>
-			<trans-unit id="mlang_scheduler_desc">
+			<trans-unit id="mlang_scheduler_force_desc">
 				<source>Forces update of all links</source>
+			</trans-unit>
+			<trans-unit id="mlang_scheduler_delete">
+				<source>CoolURI Delete All</source>
+			</trans-unit>
+			<trans-unit id="mlang_scheduler_delete_desc">
+				<source>Deletes all non-sticky links from the cache</source>
 			</trans-unit>
 		</body>
 	</file>
