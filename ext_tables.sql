@@ -19,7 +19,7 @@ CREATE TABLE link_cache (
 	id int(10) unsigned NOT NULL auto_increment,
 	params blob,
 	url char(255),
-	tstamp TIMESTAMP default CURRENT_TIMESTAMP,
+	tstamp TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
 	crdatetime datetime default NULL,
 	sticky tinyint(1) unsigned default 0,
 

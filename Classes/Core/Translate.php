@@ -401,8 +401,9 @@ class Translate {
                     case '_POST': $_POST = array_merge($_POST,$res); break;
                     default: $GLOBALS[$x] = $res;
                 }
-            } else
-            $_GET = $res;
+            } else {
+                $_GET = $res;
+            }
 
             $this->uri = $res;
 

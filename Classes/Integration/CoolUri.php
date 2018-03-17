@@ -442,9 +442,9 @@ class CoolUri
 
 
         $db = &$GLOBALS['TYPO3_DB'];
-        $temp = $db->exec_SELECTquery('COUNT(*) as num', 'sys_template',
-            'deleted=0 AND hidden=0 AND pid=' . $pagId . ' AND root=1' . $enable);
-        $countCache[$pagId] = (int)$db->sql_fetch_assoc($temp);
+        $temp = $db->exec_SELECTquery('COUNT(*) as num', 'sys_template', 'deleted=0 AND hidden=0 AND pid=' . $pagId . ' AND root=1' . $enable);
+        $row = $db->sql_fetch_assoc($temp);
+        $countCache[$pagId] = $row['num'];
         return $countCache[$pagId];
     }
 
