@@ -118,7 +118,7 @@ class Functions {
 
     $pieces = explode('$1',$sql);
     foreach ($pieces as $k=>$v) {
-        $pieces[$k] = preg_replace_callback('~\{([^}]+)\}~',array(self,'replaceParameterInSQL'),$v);
+        $pieces[$k] = preg_replace_callback('~\{([^}]+)\}~',array(__CLASS__,'replaceParameterInSQL'),$v);
     }
     $sql = implode($escapedParam,$pieces);
 
