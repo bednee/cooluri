@@ -604,17 +604,17 @@ class CoolUri
     }
 
     private static function extractArraysFromParams($params)
-	{
-		// turn array back into query string
-		// so it can be used with parse_str
-		if (empty($params)) {
-			return [];
-		}
+    {
+        // turn array back into query string
+        // so it can be used with parse_str
+        if (empty($params)) {
+            return [];
+        }
 
-		$qs = \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('', $params);
-		parse_str($qs, $output);
-		return $output;
-	}
+        $qs = \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('', $params);
+        parse_str($qs, $output);
+        return $output;
+    }
 
     private static function isBEUserLoggedIn()
     {
