@@ -610,7 +610,13 @@ class CoolUri
         if (empty($params)) {
             return Array();
         }
-        foreach ($params as $k => $v) $params[$k] = $k . '=' . rawurlencode($v);
+        if (!is_array($value)) {
+            $params[$param] = $param . '=' . rawurlencode($value);
+        } else {
+            foreach ($value as $subParam => $subValue) {
+                $params[$param] = $param . '[' . $subParam . ']=' . rawurlencode($subValue);
+            }
+	    }
         $qs = implode('&', $params);
         parse_str($qs, $output);
         return $output;
