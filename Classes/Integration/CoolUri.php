@@ -616,7 +616,7 @@ class CoolUri
             foreach ($value as $subParam => $subValue) {
                 $params[$param] = $param . '[' . $subParam . ']=' . rawurlencode($subValue);
             }
-	    }
+        }
         $qs = implode('&', $params);
         parse_str($qs, $output);
         return $output;
