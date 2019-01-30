@@ -604,31 +604,17 @@ class CoolUri
     }
 
     private static function extractArraysFromParams($params)
-    {
-        // turn array back into query string
-        // so it can be used with parse_str
-        if (empty($params)) {
-            return Array();
-        }
-<<<<<<< HEAD
-<<<<<<< HEAD
-        if (!is_array($value)) {
-            $params[$param] = $param . '=' . rawurlencode($value);
-        } else {
-            foreach ($value as $subParam => $subValue) {
-                $params[$param] = $param . '[' . $subParam . ']=' . rawurlencode($subValue);
-            }
-        }
-=======
-        foreach ($params as $k => $v) $params[$k] = $k . '=' . rawurlencode($v);
->>>>>>> parent of 7da4643... Update CoolUri.php
-=======
-        foreach ($params as $k => $v) $params[$k] = $k . '=' . rawurlencode($v);
->>>>>>> parent of 7da4643... Update CoolUri.php
-        $qs = implode('&', $params);
-        parse_str($qs, $output);
-        return $output;
-    }
+	{
+		// turn array back into query string
+		// so it can be used with parse_str
+		if (empty($params)) {
+			return [];
+		}
+
+		$qs = \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('', $params);
+		parse_str($qs, $output);
+		return $output;
+	}
 
     private static function isBEUserLoggedIn()
     {
