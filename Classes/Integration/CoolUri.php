@@ -611,6 +611,7 @@ class CoolUri
             return Array();
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (!is_array($value)) {
             $params[$param] = $param . '=' . rawurlencode($value);
         } else {
@@ -618,6 +619,9 @@ class CoolUri
                 $params[$param] = $param . '[' . $subParam . ']=' . rawurlencode($subValue);
             }
         }
+=======
+        foreach ($params as $k => $v) $params[$k] = $k . '=' . rawurlencode($v);
+>>>>>>> parent of 7da4643... Update CoolUri.php
 =======
         foreach ($params as $k => $v) $params[$k] = $k . '=' . rawurlencode($v);
 >>>>>>> parent of 7da4643... Update CoolUri.php
