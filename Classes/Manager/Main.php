@@ -109,7 +109,7 @@ class Main {
               <input type="checkbox" name="sticky" value="1"> Delete sticky too
             </label>
             </div>
-            <input type="submit" name="delete" value="DELETE EVERYTHING AND START AGAIN" class="btn btn-danger">
+	    <input type="submit" name="delete" value="DELETE EVERYTHING AND START AGAIN" onclick="javascript:return confirm(\'Are you sure you want to delete all named urls?\');" />
           </form>
           </div>
         </div>
