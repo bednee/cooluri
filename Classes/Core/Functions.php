@@ -107,18 +107,18 @@ class Functions {
   private static function replaceParameterInSQL($match) {
     $m = explode('=',$match[1]);
     $param = isset(self::$allparams[$m[0]])?self::$allparams[$m[0]]:(isset($m[1])?$m[1]:'');
-    $param = DB::escape($param);
+    $param = DB::getInstance()->escape($param);
     return $param;
   }
 
   public static function lookindb($sql,$param='',$conf=null,$allparams=array()) {
     self::$allparams = $allparams;
 
-    $escapedParam = DB::escape($param);
+    $escapedParam = DB::getInstance()->escape($param);
 
     $pieces = explode('$1',$sql);
     foreach ($pieces as $k=>$v) {
-        $pieces[$k] = preg_replace_callback('~\{([^}]+)\}~',array(__CLASS__,'replaceParameterInSQL'),$v);
+        $pieces[$k] = preg_replace_callback('~\{([^}]+)\}~',array('self','replaceParameterInSQL'),$v);
     }
     $sql = implode($escapedParam,$pieces);
 
@@ -161,7 +161,7 @@ class Functions {
     foreach ($params as $k=>$v) {
     	$newparams[(string)$k] = (string)$v;
     }
-    return DB::escape(serialize($newparams),$tp);
+    return DB::getInstance()->escape(serialize($newparams),$tp);
   }
 
   public static function cache2params($cache) {

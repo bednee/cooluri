@@ -121,8 +121,10 @@ class Main {
   private function serializedArrayToQueryString($ar) {
     $ar = \Bednarik\Cooluri\Core\Functions::cache2params($ar);
     $pars = Array();
-    foreach ($ar as $k=>$v) {
-      $pars[] = $k.'='.$v;
+    if ($ar != null) {
+        foreach ($ar as $k=>$v) {
+          $pars[] = $k.'='.$v;
+        }
     }
     return implode('&amp;',$pars);
   }
@@ -144,7 +146,7 @@ class Main {
 
     if (!empty($id)) {
       $q = $this->db->query('DELETE FROM '.$this->table.($old?'oldlinks':'cache').' WHERE id='.$id.' LIMIT 1');
-      if (!$q || $this->db->affected_rows()==0) {
+      if (!$q || $this->db->affected_rows($q)==0) {
           $c = '<div class="error"><p>The link hasn\'t been deleted because it doesn\'t exist (or maybe a DB error).</p></div>';
       } else {
         $c = '<div class="succes"><p>The link has been deleted.</p></div>';
@@ -167,7 +169,7 @@ class Main {
 
     if (!empty($id)) {
       $q = $this->db->query('UPDATE '.$this->table.($old?'oldlinks':'cache').' SET sticky=not(sticky) WHERE id='.$id.' LIMIT 1');
-      if (!$q || $this->db->affected_rows()==0) {
+      if (!$q || $this->db->affected_rows($q)==0) {
           $c = '<div class="error"><p>The sticky value hasn\'t been changed because the link doesn\'t exist (or maybe a DB error).</p></div>';
       } else {
         $c = '<div class="bg-success text-center"><p class="text-success" style="padding:15px;">The sticky value has been changed.</p></div>';

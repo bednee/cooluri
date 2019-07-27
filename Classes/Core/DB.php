@@ -24,10 +24,7 @@ class DB extends DBLayer {
   }
   
   public static function getInstance() {
-    if(!parent::$_instance instanceof self){
-      parent::$_instance = new self();
-    }
-    return parent::$_instance;
+    return parent::getInstance();
   }
   
 }

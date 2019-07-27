@@ -391,14 +391,14 @@ class CoolUri
         } else {
             $enable = ' AND pages.deleted=0 AND pages.hidden=0';
         }
-        $db = & $GLOBALS['TYPO3_DB'];
+        $db = \Bednarik\Cooluri\Core\DB::getInstance();
         $max = 10;
         while ($max > 0 && $id) {
 
             \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Looking for domain on page ' . $id, 'CoolUri');
 
-            $q = $db->exec_SELECTquery('pages.title, pages.pid, pages.is_siteroot, pages.uid AS id, sys_domain.domainName, sys_domain.redirectTo', 'pages LEFT JOIN sys_domain ON pages.uid=sys_domain.pid', 'pages.uid=' . $id . $enable . ' AND (sys_domain.hidden=0 OR sys_domain.hidden IS NULL)', '', 'sys_domain.sorting');
-            $page = $db->sql_fetch_assoc($q);
+            $q = $db->query('SELECT pages.title, pages.pid, pages.is_siteroot, pages.uid AS id, sys_domain.domainName, sys_domain.redirectTo FROM pages LEFT JOIN sys_domain ON pages.uid=sys_domain.pid WHERE pages.uid=' . $id . $enable . ' AND (sys_domain.hidden=0 OR sys_domain.hidden IS NULL) ORDER BY sys_domain.sorting');
+            $page = $db->fetch($q);
 
             if ($page['domainName'] && !$page['redirectTo']) {
                 $resDom = preg_replace('~^.*://(.*)/?$~', '\\1', preg_replace('~/$~', '', $page['domainName']));
@@ -441,9 +441,9 @@ class CoolUri
         }
 
 
-        $db = &$GLOBALS['TYPO3_DB'];
-        $temp = $db->exec_SELECTquery('COUNT(*) as num', 'sys_template', 'deleted=0 AND hidden=0 AND pid=' . $pagId . ' AND root=1' . $enable);
-        $countCache[$pagId] = $db->sql_fetch_assoc($temp);
+        $db = \Bednarik\Cooluri\Core\DB::getInstance();
+        $temp = $db->query('SELECT COUNT(*) as num FROM sys_template WHERE deleted=0 AND hidden=0 AND pid=' . $pagId . ' AND root=1' . $enable);
+        $countCache[$pagId] = $db->fetch($temp);
         return $countCache[$pagId];
     }
 
@@ -512,7 +512,7 @@ class CoolUri
         } else {
             $enable = ' AND deleted=0 AND hidden=0';
         }
-        $db = & $GLOBALS['TYPO3_DB'];
+        $db = \Bednarik\Cooluri\Core\DB::getInstance();
 
         $id = (int)$value[(string)$conf->saveto];
 
@@ -540,8 +540,8 @@ class CoolUri
             if (!is_numeric($id)) {
                 $id = $GLOBALS['TSFE']->sys_page->getPageIdFromAlias($id);
             }
-            $q = $db->exec_SELECTquery('*', 'pages', 'uid=' . $id . $enable);
-            $page = $db->sql_fetch_assoc($q);
+            $q = $db->query('SELECT * FROM pages WHERE uid=' . $id . $enable);
+            $page = $db->fetch($q);
 
             if (!$page) {
                 break;
@@ -553,8 +553,8 @@ class CoolUri
             }
 
             if ($langId) {
-                $q = $db->exec_SELECTquery('*', 'pages_language_overlay', 'pid=' . $id . ' AND sys_language_uid=' . $langId . $enable);
-                $lo = $db->sql_fetch_assoc($q);
+                $q = $db->query('SELECT * FROM pages WHERE l10n_parent=' . $id . ' AND sys_language_uid=' . $langId . $enable);
+                $lo = $db->fetch($q);
                 if ($lo) {
                     unset($lo['uid']);
                     unset($lo['pid']);
