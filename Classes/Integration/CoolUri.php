@@ -608,10 +608,10 @@ class CoolUri
         // turn array back into query string
         // so it can be used with parse_str
         if (empty($params)) {
-            return Array();
+            return [];
         }
-        foreach ($params as $k => $v) $params[$k] = $k . '=' . rawurlencode($v);
-        $qs = implode('&', $params);
+
+        $qs = \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('', $params);
         parse_str($qs, $output);
         return $output;
     }
