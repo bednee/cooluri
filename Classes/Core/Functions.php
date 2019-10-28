@@ -131,7 +131,7 @@ class Functions {
     if (!$row) {
         return $param;
     }
-    $val = $row[0];
+    $val = array_pop($row);
     $k = 1;
     while (empty($val) && isset($row[$k])) {
       $val = $row[$k];
