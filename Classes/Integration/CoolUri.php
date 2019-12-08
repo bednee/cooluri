@@ -610,10 +610,17 @@ class CoolUri
         if (empty($params)) {
             return Array();
         }
-        foreach ($params as $k => $v) $params[$k] = $k . '=' . rawurlencode($v);
+        $alreadyExtracted = [];
+        foreach ($params as $k => $v) {
+            if (is_array($v)) {
+                $alreadyExtracted[$k] = $v;
+            } else {
+                $params[$k] = $k . '=' . rawurlencode($v);
+            }
+        }
         $qs = implode('&', $params);
         parse_str($qs, $output);
-        return $output;
+        return array_merge($output, $alreadyExtracted);
     }
 
     private static function isBEUserLoggedIn()
