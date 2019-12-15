@@ -9,7 +9,8 @@
     ],
     "type": "typo3-cms-extension",
     "require": {
-        "typo3/cms-core": "^9.5"
+        "typo3/cms-core": "^9.5",
+        "friendsoftypo3/typo3db-legacy": "^1.1"
     },
     "replace": {
         "cooluri": "self.version",

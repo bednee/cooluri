@@ -60,6 +60,11 @@ class DBLayer
         return $this->conn->quote($string);
     }
 
+    public function quoteIdentifier($string)
+    {
+        return $this->conn->quoteIdentifier($string);
+    }
+
     public function error()
     {
         return $this->conn->errorCode();
@@ -74,6 +79,5 @@ class DBLayer
     {
         return $res->rowCount();
     }
-
 
 }

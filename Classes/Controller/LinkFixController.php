@@ -31,10 +31,17 @@ namespace Bednarik\Cooluri\Controller;
  */
 class LinkFixController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
+    private $db;
+
     /**
      * @var \TYPO3\CMS\Core\DataHandling\DataHandler
      */
     protected $dataHandler;
+
+    function __construct() {
+        $this->db = \Bednarik\Cooluri\Core\DB::getInstance();
+    }
+
 
     /**
      * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
@@ -52,11 +59,15 @@ class LinkFixController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         $this->view->assign('url',$url);
 
         if (!empty($url)) {
-            $urls = $this->getUrls($url);
-            foreach ($urls as $u) {
-                $u['parameters'] = http_build_query (unserialize($u['params']));
+            $q = $this->getUrls($url);
+            $urls = [];
+            if ($q !== false) {
+                while (($u = $this->db->fetch($q)) != null) {
+                    $u['parameters'] = http_build_query (unserialize($u['params']));
+                    $urls[] = $u;
+                }
+                $this->view->assign('urls', $urls);
             }
-            $this->view->assign('urls', $urls);
         }
     }
 
@@ -64,7 +75,7 @@ class LinkFixController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
      * @param int $id
      */
     public function deleteAction($id) {
-        $GLOBALS['TYPO3_DB']->exec_DELETEquery('link_cache','id = '.(int)$id);
+        $this->db->query('DELETE FROM link_cache WHERE id='.(int)$id.' LIMIT 1');
         $this->dataHandler->start(NULL,NULL);
         $this->dataHandler->clear_cacheCmd('all');
         $this->addFlashMessage('A link has been removed from cache, please reload page where the link is present (not the page itself, but e.g. parent page with this link in menu) in order to generate it again.');
@@ -75,8 +86,6 @@ class LinkFixController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         if (!empty($url)) {
             $parsedUrl = parse_url($url);
             if ($parsedUrl) {
-                $parsedUrl['path'] = $GLOBALS['TYPO3_DB']->quoteStr($parsedUrl['path'],null);
-                $parsedUrl['host'] = $GLOBALS['TYPO3_DB']->quoteStr($parsedUrl['host'],null);
                 $possibleMatches = Array();
                 $possibleMatches[] = $parsedUrl['path'];
                 $possibleMatches[] = $parsedUrl['host'].'@'.$parsedUrl['path'];
@@ -93,7 +102,7 @@ class LinkFixController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
                     $possibleMatches[] = $parsedUrl['host'].'@'.substr($parsedUrl['path'],1,strlen($parsedUrl['path'])-1);
                 }
                 $where = "(url = '".implode("' OR url='",$possibleMatches)."')";
-                return $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*','link_cache',$where);
+                return $this->db->query('SELECT * FROM link_cache WHERE ' .$where);
             }
         }
         return false;
