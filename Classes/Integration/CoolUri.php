@@ -69,26 +69,21 @@ class CoolUri
         return $lt;
     }
 
-    public static function cool2params($params, $ref)
+    public static function cool2params()
     {
-        self::$pObj = & $ref;
+        /** @var $request \TYPO3\CMS\Core\Http\ServerRequest */
+        $request = $GLOBALS['TYPO3_REQUEST'];
 
-        if (!empty($params['pObj']->siteScript)) {
-            $cond = $params['pObj']->siteScript && substr($params['pObj']->siteScript, 0, 9) != 'index.php' && substr($params['pObj']->siteScript, 0, 1) != '?';
-            $paramsinurl = '/' . $params['pObj']->siteScript;
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('SITESCRIPT: ' . $paramsinurl, 'CoolUri');
-        } else {
-            $cond = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI') && substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 9) != 'index.php' && substr(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI'), 1, 1) != '?';
-            $paramsinurl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI');
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('REQUEST_URI: ' . $paramsinurl, 'CoolUri');
-        }
+        $siteScript = $request->getAttribute('normalizedParams')->getSiteScript();
+
+        $paramsinurl = '/' . $siteScript;
 
         // check if the only param is the same as the TYPO3 site root
         if ($paramsinurl == substr(PATH_site, strlen(preg_replace('~/$~', '', $_SERVER['DOCUMENT_ROOT'])))) {
-            return;
+            return false;
         }
 
-        if ($cond) {
+        if ($siteScript && substr($siteScript, 0, 9) != 'index.php' && substr($siteScript, 0, 1) != '?') {
 
             $lt = self::getTranslateInstance();
 
@@ -99,7 +94,7 @@ class CoolUri
                 $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'sys_domain', 'domainName=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($domain, 'sys_domain') . ' AND hidden=0');
                 $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
                 if (!$row) {
-                    return; // Domain is not available, so no translation
+                    return false; // Domain is not available, so no translation
                 }
                 if (empty(\Bednarik\Cooluri\Core\Translate::$conf->cache->prefix)) {
                     if ($row && !empty($row['redirectTo'])) {
@@ -122,18 +117,9 @@ class CoolUri
                 }
             }
 
-            $pars = $lt->cool2params($paramsinurl);
-
-            $params['pObj']->id = $pars['id'];
-            unset($pars['id']);
-            $npars = self::extractArraysFromParams($pars);
-            self::stripSlashesOnArray($npars);
-            $params['pObj']->mergingWithGetVars($npars);
-
-            // Re-create QUERY_STRING from Get vars for use with typoLink()
-            $_SERVER['QUERY_STRING'] = self::decodeSpURL_createQueryString($pars);
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Resolved QS: ' . $_SERVER['QUERY_STRING'], 'CoolUri');
+            return self::extractArraysFromParams($lt->cool2params($paramsinurl));
         }
+        return false;
     }
 
     /**
