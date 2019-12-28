@@ -74,7 +74,7 @@ class Main {
     $c = '';
     if (!empty($_POST)) {
       if (isset($_POST['refresh'])) {
-        $this->db->query('UPDATE '.$this->table.'cache SET tstamp=0');
+        $this->db->query('UPDATE '.$this->table.'cache SET tstamp=FROM_UNIXTIME(0)');
       } elseif (isset($_POST['delete'])) {
          if (isset($_POST['sticky']) && $_POST['sticky'] == 1) {
              $this->db->query('TRUNCATE '.$this->table.'cache');
