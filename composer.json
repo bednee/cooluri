@@ -13,7 +13,7 @@
         "friendsoftypo3/typo3db-legacy": "^1.1"
     },
     "replace": {
-        "cooluri": "self.version",
+        "bednee/cooluri": "self.version",
         "typo3-ter/cooluri": "self.version"
     },
     "autoload": {
