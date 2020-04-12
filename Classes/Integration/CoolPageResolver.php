@@ -61,7 +61,7 @@ class CoolPageResolver extends \TYPO3\CMS\Frontend\Middleware\PageResolver
         if ($this->controller->isBackendUserLoggedIn() && !$GLOBALS['BE_USER']->doesUserHaveAccess($this->controller->page, \TYPO3\CMS\Core\Type\Bitmask\Permission::PAGE_SHOW)) {
             unset($GLOBALS['BE_USER']);
             // Register an empty backend user as aspect
-            $this->setBackendUserAspect(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Context::class), null);
+            $this->setBackendUserAspect(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class), null);
             $this->controller->determineId();
         }
 
