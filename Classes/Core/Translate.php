@@ -34,7 +34,7 @@ class Translate {
 
     public static function getInstance($xmlconffile = 'CoolUriConf.xml') {
         if (!self::$instance) {
-            self::$instance = new Translate($xmlconffile);
+			self::$instance =  \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Bednarik\Cooluri\Core\Translate', $xmlconffile);
         }
         return self::$instance;
     }
@@ -89,7 +89,7 @@ class Translate {
         return $uri;
     }
 
-    private function lookUpInCache($uri) {
+    protected function lookUpInCache($uri) {
         $cachedparams = null;
         if (!empty(self::$conf->cache) && !empty(self::$conf->cache->usecache) && (string)self::$conf->cache->usecache==1) {
             $tp = Functions::getTablesPrefix(self::$conf);
