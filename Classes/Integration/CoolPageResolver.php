@@ -29,6 +29,7 @@ class CoolPageResolver extends \TYPO3\CMS\Frontend\Middleware\PageResolver
 {
 
     public function process(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler): \Psr\Http\Message\ResponseInterface {
+        $originalQueryParams = $request->getQueryParams();
         $parameters = CoolUri::cool2params();
         if ($parameters === false) {
             return parent::process($request, $handler);
@@ -39,7 +40,7 @@ class CoolPageResolver extends \TYPO3\CMS\Frontend\Middleware\PageResolver
             (string)($parameters['type'] ?? '0'),
             $parameters,
             [],
-            $request->getQueryParams()
+            $originalQueryParams
         );
 
         $this->controller->id = $pageArguments->getPageId();
@@ -47,7 +48,8 @@ class CoolPageResolver extends \TYPO3\CMS\Frontend\Middleware\PageResolver
         $this->controller->cHash = $parameters['cHash'];
 
         // merge the PageArguments with the request query parameters
-        $queryParams = array_replace_recursive($request->getQueryParams(), $pageArguments->getArguments());
+
+        $queryParams = array_replace_recursive($originalQueryParams, $pageArguments->getArguments());
         $request = $request->withQueryParams($queryParams);
         $this->controller->setPageArguments($pageArguments);
 

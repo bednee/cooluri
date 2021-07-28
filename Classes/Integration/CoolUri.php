@@ -75,7 +75,6 @@ class CoolUri
         $request = $GLOBALS['TYPO3_REQUEST'];
 
         $siteScript = $request->getAttribute('normalizedParams')->getSiteScript();
-
         $paramsinurl = '/' . $siteScript;
 
         // check if the only param is the same as the TYPO3 site root
@@ -117,7 +116,9 @@ class CoolUri
                 }
             }
 
-            return self::extractArraysFromParams($lt->cool2params($paramsinurl));
+            $p = $lt->cool2params($paramsinurl);
+            $arr = self::extractArraysFromParams($p);
+            return $arr;
         }
         return false;
     }
@@ -600,13 +601,14 @@ class CoolUri
         foreach ($params as $k => $v) {
             if (is_array($v)) {
                 $alreadyExtracted[$k] = $v;
+                unset($params[$k]);
             } else {
                 $params[$k] = $k . '=' . rawurlencode($v);
             }
         }
         $qs = implode('&', $params);
         parse_str($qs, $output);
-        return array_merge($output, $alreadyExtracted);
+        return array_merge_recursive($output, $alreadyExtracted);
     }
 
     private static function isBEUserLoggedIn()
