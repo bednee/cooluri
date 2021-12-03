@@ -45,7 +45,7 @@ class CoolPageResolver extends \TYPO3\CMS\Frontend\Middleware\PageResolver
 
         $this->controller->id = $pageArguments->getPageId();
         $this->controller->type = $pageArguments->getPageType() ?? $this->controller->type;
-        $this->controller->cHash = $parameters['cHash'];
+        $this->controller->cHash = $parameters['cHash'] ? $parameters['cHash'] : '';
 
         // merge the PageArguments with the request query parameters
 
